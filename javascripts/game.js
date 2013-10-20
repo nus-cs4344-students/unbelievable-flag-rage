@@ -1,7 +1,27 @@
+var global = {
+    WIDTH: 1136,
+    HEIGHT: 640,
+    DOUBLE: true,
+    DEBUG: true,
+    network: {
+        host: "localhost",
+        port: 4344,
+        totlatency: 0,
+        latency: 0,
+        emitTime: 0,
+        emits: 0
+    },
+    state: {
+        playername: "",
+        localPlayer: undefined,
+        remotePlayers: []
+    }
+};
+
 /* game namespace */
 var game = {
     onload: function() {
-        if (!me.video.init("jsapp", 800, 600, true, 'auto')) {
+        if (!me.video.init("jsapp", 1680, 1680, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");
             return;
         }
@@ -15,11 +35,14 @@ var game = {
     },
     loaded: function() {
         // set the Play/Ingame Screen Object
-        me.state.set(me.state.PLAY, new game.PlayScreen());
+        game.playScreen = new game.PlayScreen();
+        me.state.set(me.state.PLAY, game.playScreen);
 
         // add player entity in the entity pool
-        me.entityPool.add("player1",game.PlayerEntity);
-        console.log("added player1 entity");
+        //me.entityPool.add("player",game.PlayerEntity);
+        //global.state.localPlayer = me.entityPool.newInstanceOf("player");
+        //global.state.playername = global.state.localPlayer.name;
+        //console.log("added player1 entity");
 
         //enable keyboard
         me.input.bindKey(me.input.KEY.LEFT, "left");

@@ -9,6 +9,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
     /* constructor */
     init: function(x,y, settings){
+        /* Player Properties */
+        this.isMultiplayer = true;
+        this.step = 1;
         //call constructor
         this.parent(x,y, settings);
 
@@ -21,6 +24,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
         //set display to follow out position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
 
+        //set position
+        //this.pos.x = 1222;
+        //this.pos.y = 955;
 
         // set a renderable
         this.renderable = game.player1Texture.createAnimationFromName([
@@ -41,21 +47,26 @@ game.PlayerEntity = me.ObjectEntity.extend({
     },
 
     update: function(){
-        if (me.input.isKeyPressed('left')){
-            //flip sprite on horizontal axis
-            this.flipX(true);
-            //update entity velocity
-            this.vel.x -= this.accel.x * me.timer.tick;
-        }
-        else if (me.input.isKeyPressed('right')){
-            //unflip sprite
-            this.flipX(false);
-            //update entitiy velocity
-            this.vel.x += this.accel.x *me.timer.tick;
-        }
-        else {
-            this.vel.x = 0;
-        }
+
+
+
+        if (this.name === global.state.playername){
+            if (me.input.isKeyPressed('left')){
+                //flip sprite on horizontal axis
+                this.flipX(true);
+                //update entity velocity
+                this.vel.x -= this.accel.x * me.timer.tick;
+            }
+            else if (me.input.isKeyPressed('right')){
+                //unflip sprite
+                this.flipX(false);
+                //update entitiy velocity
+                this.vel.x += this.accel.x *me.timer.tick;
+            }
+            else {
+                this.vel.x = 0;
+            }
+
 
         if (me.input.isKeyPressed('jump')){
             //make sure we are not already jumping/falling
@@ -67,7 +78,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.jumping = true;
             }
         }//if (me.input.isKeyPressed('jump'))
-
+    }
         //check and update player movement
         this.updateMovement();
 
@@ -77,9 +88,35 @@ game.PlayerEntity = me.ObjectEntity.extend({
             this.parent();
             return true;
         }
+        if (this.name === global.state.playername){
+            //if (this.step == 0){
+                sendToServer({
+                     type: "update",
+                     x: global.state.localPlayer.pos.x,
+                     y: global.state.localPlayer.pos.y
+                });
+                console.log("send to server type update");
+            //}
+        }
+        //this.step++;
+        //if (this.step > ){
+        //    this.step = 0;
+        //}
 
         // else inform the engine we did not perform
         // any update (e.g. position, animation)
         return false;
+    },
+    sendToServer : function (msg){
+        /*  usage example
+         msg = { type: "update", x: player.pos.x, y: player.pos.y};
+         sendToServer(msg);
+         */
+        game.playScreen.socket.send(JSON.stringify(msg));
     }
 });
+
+var sendToServer = function(msg){
+    console.log("msg: " + msg);
+    game.playScreen.socket.send(JSON.stringify(msg));
+}
