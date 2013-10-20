@@ -10,7 +10,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
     /* constructor */
     init: function(x,y, settings){
         /* Player Properties */
-        this.isMultiplayer = true;
+        this.alwaysUpdate = true;
         this.step = 1;
         //call constructor
         this.parent(x,y, settings);
@@ -48,8 +48,6 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
     update: function(){
 
-
-
         if (this.name === global.state.playername){
             if (me.input.isKeyPressed('left')){
                 //flip sprite on horizontal axis
@@ -66,8 +64,6 @@ game.PlayerEntity = me.ObjectEntity.extend({
             else {
                 this.vel.x = 0;
             }
-
-
         if (me.input.isKeyPressed('jump')){
             //make sure we are not already jumping/falling
             if (!this.jumping && !this.falling){
@@ -78,6 +74,10 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.jumping = true;
             }
         }//if (me.input.isKeyPressed('jump'))
+        if (me.input.isKeyPressed('start')){
+            sendToServer({type: "start"});
+            console.log("send server START");
+        }
     }
         //check and update player movement
         this.updateMovement();
@@ -89,19 +89,18 @@ game.PlayerEntity = me.ObjectEntity.extend({
             return true;
         }
         if (this.name === global.state.playername){
-            //if (this.step == 0){
+            if (this.step == 0){
                 sendToServer({
                      type: "update",
                      x: global.state.localPlayer.pos.x,
                      y: global.state.localPlayer.pos.y
                 });
-                console.log("send to server type update");
-            //}
+            }
         }
-        //this.step++;
-        //if (this.step > ){
-        //    this.step = 0;
-        //}
+        this.step++;
+        if (this.step > 3){
+            this.step = 0;
+        }
 
         // else inform the engine we did not perform
         // any update (e.g. position, animation)
@@ -117,6 +116,5 @@ game.PlayerEntity = me.ObjectEntity.extend({
 });
 
 var sendToServer = function(msg){
-    console.log("msg: " + msg);
     game.playScreen.socket.send(JSON.stringify(msg));
 }

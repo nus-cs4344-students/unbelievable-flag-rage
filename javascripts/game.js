@@ -44,10 +44,11 @@ var game = {
         //global.state.playername = global.state.localPlayer.name;
         //console.log("added player1 entity");
 
-        //enable keyboard
+        /*enable keyboard
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.X, "jump", true);
+        */
         //load texture for player
         game.player1Texture = new me.TextureAtlas(me.loader.getJSON("p1_walk"), me.loader.getImage("p1_walk"));
         me.debug.renderHitBox = true;

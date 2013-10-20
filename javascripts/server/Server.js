@@ -140,12 +140,16 @@ function Server()
             var playerPos = playerPosAssigning(PID);
 
             // Send message to new player (the current client)
-            unicast(conn, {type: "message", content:"You are Player " + PID + ". Your Character is at " + playerPos});
-            
+            unicast(conn, {type: "myID", playerId:PID});
+
+
+            console.log("broadcast newPlayer: " + PID);
+
             // Create player object and insert into players with key = conn.id
             players[conn.id] = new Player(conn.id, PID, xStartPos(playerPos),yStartPos(playerPos));
             sockets[PID] = conn;
             markPlayers (PID,conn);
+            broadcast({type: "newPlayer", newPlayerID: PID});
 
         }
         else
@@ -161,18 +165,23 @@ function Server()
         broadcast ({
             type: "update",
             //player 1 state
-            p1X:p1.character.getX(),
-            p1Y:p1.character.getY(),
-            p1VX:p1.character.getVX(),
-            p1VY:p1.character.getVY()
+            p1: {
+                p1X:p1.character.getX(),
+                p1Y:p1.character.getY(),
+                p1VX:p1.character.getVX(),
+                p1VY:p1.character.getVY()
+            },
 
-            /*//player 2 state
-            p2X:p2.character.getX(),
-            p2Y:p2.character.getY(),
-            p2VX:p2.character.getVX(),
-            p2VY:p2.character.getVY(),
+            //player 2 state
+            p2: {
+                p2X:p2.character.getX(),
+                p2Y:p2.character.getY(),
+                p2VX:p2.character.getVX(),
+                p2VY:p2.character.getVY()
+            }
 
-            //player 1 state
+
+            /*//player 1 state
             p3X:p3.character.getX(),
             p3Y:p3.character.getY(),
             p3VX:p3.character.getVX(),
@@ -253,6 +262,7 @@ function Server()
         {
             // one of the player starts the game.
             case "start":
+                console.log("received start");
             	prepare();
                 break;
 
@@ -272,7 +282,6 @@ function Server()
         conn.on('data', function (data)
 
         {
-            console.log("data:" + data);
             manageData (conn,data);
         });
     }
@@ -334,6 +343,7 @@ function Server()
     {
 
         conn.on('close', function () {
+            console.log(conn.id + " disconnected======")
             // Stop game if it's playing
             reset();
 
