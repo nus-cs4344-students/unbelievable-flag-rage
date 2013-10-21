@@ -11,7 +11,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
     init: function(x,y, settings){
         /* Player Properties */
         this.alwaysUpdate = true;
-        this.step = 1;
+        this.step = 0;
         //call constructor
         this.parent(x,y, settings);
 
@@ -27,6 +27,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         //set position
         //this.pos.x = 1222;
         //this.pos.y = 955;
+        //this.renderable.updateWhenPause = true;
 
         // set a renderable
         this.renderable = game.player1Texture.createAnimationFromName([
@@ -54,55 +55,66 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(true);
                 //update entity velocity
                 this.vel.x -= this.accel.x * me.timer.tick;
+
             }
             else if (me.input.isKeyPressed('right')){
                 //unflip sprite
                 this.flipX(false);
                 //update entitiy velocity
                 this.vel.x += this.accel.x *me.timer.tick;
+
             }
             else {
                 this.vel.x = 0;
+
             }
-        if (me.input.isKeyPressed('jump')){
-            //make sure we are not already jumping/falling
-            if (!this.jumping && !this.falling){
-                // set current vel to the maximum defined value
-                // gravity will then do the rest
-                this.vel.y = -this.maxVel.y * me.timer.tick;
-                // set the jumping flag
-                this.jumping = true;
+
+            if (me.input.isKeyPressed('jump')){
+                //make sure we are not already jumping/falling
+                if (!this.jumping && !this.falling){
+                    // set current vel to the maximum defined value
+                    // gravity will then do the rest
+                    this.vel.y = -this.maxVel.y * me.timer.tick;
+                    // set the jumping flag
+                    this.jumping = true;
+                }
+            }//if (me.input.isKeyPressed('jump'))
+
+            if (me.input.isKeyPressed('start')){
+                sendToServer({type: "start"});
+                console.log("send server START");
             }
-        }//if (me.input.isKeyPressed('jump'))
-        if (me.input.isKeyPressed('start')){
-            sendToServer({type: "start"});
-            console.log("send server START");
         }
-    }
+
         //check and update player movement
         this.updateMovement();
 
         // update animation if necessary
         if (this.vel.x!=0 || this.vel.y!=0 || (this.renderable && this.renderable.isFlickering())) {
-            // update object animation
-            this.parent();
-            return true;
-        }
-        if (this.name === global.state.playername){
-            if (this.step == 0){
-                sendToServer({
-                     type: "update",
-                     x: global.state.localPlayer.pos.x,
-                     y: global.state.localPlayer.pos.y
-                });
-            }
-        }
-        this.step++;
-        if (this.step > 3){
-            this.step = 0;
-        }
 
-        // else inform the engine we did not perform
+            if (this.vel.x !== 0) {
+                this.flipX(this.vel.x < 0);
+            }
+
+            if (this.name == global.state.playername){
+
+                if (this.step == 0){
+                    sendToServer({
+                        type: "update",
+                        x: global.state.localPlayer.pos.x,
+                        y: global.state.localPlayer.pos.y
+                    });
+                    //console.log("send x: " + global.state.localPlayer.pos.x + " y: " + global.state.localPlayer.pos.y);
+                }
+
+                if (this.step++ > 3)
+                    this.step = 0;
+            }
+                // update object animation
+                this.parent();
+                return true;
+        }
+         // else inform the engine we did not perform
         // any update (e.g. position, animation)
         return false;
     },

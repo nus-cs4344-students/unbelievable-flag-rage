@@ -21,10 +21,17 @@ var global = {
 /* game namespace */
 var game = {
     onload: function() {
+
+        me.sys.pauseOnBlur = false;
+        me.sys.stopOnBlur = false;
+
         if (!me.video.init("jsapp", 1680, 1680, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");
             return;
         }
+
+        //
+        //me.sys.stopOnBlur = false;
         // Set a callback to run when loading is complete.
         me.loader.onload = this.loaded.bind(this);
         // Load Resources
@@ -38,17 +45,6 @@ var game = {
         game.playScreen = new game.PlayScreen();
         me.state.set(me.state.PLAY, game.playScreen);
 
-        // add player entity in the entity pool
-        //me.entityPool.add("player",game.PlayerEntity);
-        //global.state.localPlayer = me.entityPool.newInstanceOf("player");
-        //global.state.playername = global.state.localPlayer.name;
-        //console.log("added player1 entity");
-
-        /*enable keyboard
-        me.input.bindKey(me.input.KEY.LEFT, "left");
-        me.input.bindKey(me.input.KEY.RIGHT, "right");
-        me.input.bindKey(me.input.KEY.X, "jump", true);
-        */
         //load texture for player
         game.player1Texture = new me.TextureAtlas(me.loader.getJSON("p1_walk"), me.loader.getImage("p1_walk"));
         me.debug.renderHitBox = true;

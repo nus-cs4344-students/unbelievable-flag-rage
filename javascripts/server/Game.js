@@ -12,7 +12,7 @@ var Game = {
     PLAYER_RIGHT_START_POS_X: 360,  // player right x-coord
     PLAYER_TOP_START_POS_Y: 40,     // player top y-coord
     PLAYER_BOTTOM_START_POS_Y: 360, // player bottom y-coord
-    FRAME_RATE : 25,			    // frame rate of game
+    FRAME_RATE : 60,			    // frame rate of game
     SERVER_NAME : "localhost"	    // server name of game
     //SERVER_NAME : "172.28.179.28"	// server name of game
 }

@@ -45,8 +45,8 @@ game.PlayScreen = me.ScreenObject.extend({
             name: "player"
         });
 
-        global.state.localPlayer.name = global.state.playername;
-        global.state.localPlayer.id = global.state.playername;
+        //global.state.localPlayer.name = global.state.playername;
+        //global.state.localPlayer.id = global.state.playername;
 
         //me.game.entityPool.add("player", game.PlayerEntity);//global.state.localPlayer);
         me.game.add(global.state.localPlayer, 4);
@@ -65,12 +65,14 @@ game.PlayScreen = me.ScreenObject.extend({
                         if (global.state.playername == 1){
                             //.state.localPlayer.pos.x = message.p1.p1X;
                             //global.state.localPlayer.pos.y = message.p1.p1Y;
+                            //console.log("update P2 x: " + message.p2.p2X + " y: " + message.p2.p2Y);
                             global.state.remotePlayers[0].pos.x = message.p2.p2X;
                             global.state.remotePlayers[0].pos.y = message.p2.p2Y;
                         }
                         else if (global.state.playername == 2){
                             //global.state.localPlayer.pos.x = message.p2.p2X;
                             //global.state.localPlayer.pos.y = message.p2.p2Y;
+                            //console.log("update P1 x: " + message.p1.p1X + " y: " + message.p1.p1Y);
                             global.state.remotePlayers[0].pos.x = message.p1.p1X;
                             global.state.remotePlayers[0].pos.y = message.p1.p1Y;
                         }
@@ -78,20 +80,22 @@ game.PlayScreen = me.ScreenObject.extend({
                     break;
                     //get local player ID - 1,2,3,4 from server after connecting
                     case "myID":
-                        global.state.localPlayer.id = message.playerId;
-                        global.state.playername = message.playerId;
-                        global.state.localPlayer.name =  message.playerId;
+                        console.log("received myID: " + message.playerID);
+                        global.state.localPlayer.id = message.playerID;
+                        global.state.playername = message.playerID;
+                        global.state.localPlayer.name =  message.playerID;
                     break;
                     case "newPlayer":
                         var newPlayerID = message.newPlayerID;
-
-                        if (global.state.localPlayer.id != newPlayerID){
-                            var data = {x: 1540, y: 140, id: newPlayerID};
-                            onNewPlayer(data);
-                        }
-                        else if (global.state.localPlayer.id = 2){
-                            var data = {x: 1540, y: 140, id: 1};
-                            onNewPlayer(data);
+                        if (global.state.remotePlayers.length == 0){
+                            if (global.state.localPlayer.id != newPlayerID){
+                                var data = {x: 1540, y: 140, id: newPlayerID, name : newPlayerID};
+                                onNewPlayer(data);
+                            }
+                            else if (global.state.localPlayer.id == 2){
+                                var data = {x: 1540, y: 140, id: 1, name : 1};
+                                onNewPlayer(data);
+                            }
                         }
                     break;
                 }

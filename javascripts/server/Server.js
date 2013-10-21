@@ -140,17 +140,14 @@ function Server()
             var playerPos = playerPosAssigning(PID);
 
             // Send message to new player (the current client)
-            unicast(conn, {type: "myID", playerId:PID});
-
-
-            console.log("broadcast newPlayer: " + PID);
+            unicast(conn, {type: "myID", playerID:PID});
 
             // Create player object and insert into players with key = conn.id
             players[conn.id] = new Player(conn.id, PID, xStartPos(playerPos),yStartPos(playerPos));
             sockets[PID] = conn;
             markPlayers (PID,conn);
             broadcast({type: "newPlayer", newPlayerID: PID});
-
+            console.log("broadcast newPlayer: " + PID);
         }
         else
         {
@@ -268,7 +265,7 @@ function Server()
 
            //update position
             case "update":
-                console.log("server updating");
+                //console.log("server updating");
             	update(conn,message);
             	break;
             default:
