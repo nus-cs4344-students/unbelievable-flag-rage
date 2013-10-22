@@ -16,7 +16,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.parent(x,y, settings);
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(8,22);
+        this.setVelocity(4,22);
+        this.vel.x = 0;
+        this.vel.y = 0;
 
         // adjust bonding box for collision
         //this.updateColRect(-1, 0, 10, 11);
@@ -62,7 +64,6 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(false);
                 //update entitiy velocity
                 this.vel.x += this.accel.x *me.timer.tick;
-
             }
             else {
                 this.vel.x = 0;
@@ -88,7 +89,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
         //check and update player movement
         this.updateMovement();
-
+        var result = this.parent();
         // update animation if necessary
         if (this.vel.x!=0 || this.vel.y!=0 || (this.renderable && this.renderable.isFlickering())) {
 
@@ -96,27 +97,28 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(this.vel.x < 0);
             }
 
-            if (this.name == global.state.playername){
-
-                if (this.step == 0){
-                    sendToServer({
-                        type: "update",
-                        x: global.state.localPlayer.pos.x,
-                        y: global.state.localPlayer.pos.y
-                    });
+            // update object animation
+            //var result = this.parent();
+            //return result;
                     //console.log("send x: " + global.state.localPlayer.pos.x + " y: " + global.state.localPlayer.pos.y);
-                }
-
-                if (this.step++ > 3)
-                    this.step = 0;
-            }
-                // update object animation
-                this.parent();
-                return true;
         }
+        // send local player state to server
+        if (this.name == global.state.playername){
+            if (this.step == 0){
+                this.sendToServer({
+                    type: "update",
+                    x: global.state.localPlayer.pos.x,
+                    y: global.state.localPlayer.pos.y,
+                    vX: global.state.localPlayer.vel.x,
+                    vY: global.state.localPlayer.vel.y
+                });
+            } //if (this.step)..
+        }
+        if (this.step++ > 3)
+            this.step = 0;
          // else inform the engine we did not perform
         // any update (e.g. position, animation)
-        return false;
+        return result;
     },
     sendToServer : function (msg){
         /*  usage example

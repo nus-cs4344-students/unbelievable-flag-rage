@@ -34,6 +34,14 @@ function Server()
         }
     }
 
+    var selectiveBroadcast = function(idNotToSendTo, msg){
+        for (var id in sockets){
+            if (id != idNotToSendTo){
+                sockets[id].write(JSON.stringify(msg));
+            }
+        }
+    }
+
     //private method: unicast(socket, msg)
     var unicast = function (socket, msg)
     {
@@ -75,7 +83,7 @@ function Server()
        // 3rd player is always top right,
        // 4th player is always bottom right
 
-       if(PID == 1)
+       if (PID == 1)
            return "topLeft";
        else if(PID == 2)
            return "bottomLeft";
@@ -137,17 +145,51 @@ function Server()
 
         if (PID != 0)
         {
-            var playerPos = playerPosAssigning(PID);
 
-            // Send message to new player (the current client)
-            unicast(conn, {type: "myID", playerID:PID});
+            var playerPos = playerPosAssigning(PID);
+            var playerPosX = xStartPos(playerPos);
+            var playerPosY = yStartPos(playerPos);
 
             // Create player object and insert into players with key = conn.id
-            players[conn.id] = new Player(conn.id, PID, xStartPos(playerPos),yStartPos(playerPos));
+            players[conn.id] = new Player(conn.id, PID, playerPosX, playerPosY);
             sockets[PID] = conn;
             markPlayers (PID,conn);
-            broadcast({type: "newPlayer", newPlayerID: PID});
-            console.log("broadcast newPlayer: " + PID);
+
+            // Send recently connected client coordinates to create local player
+            unicast(conn,
+                {
+                    type: "createLocalPlayer",
+                    playerID: PID,
+                    x: playerPosX,
+                    y: playerPosY
+                }
+            );
+            // Broadcast new player connected to other players
+            selectiveBroadcast(PID,
+                {
+                type: "createRemotePlayer",
+                playerID: PID,
+                x: playerPosX,
+                y: playerPosY
+                }
+            );
+            // Tell new player about other existing players.
+            for (var connID in players){
+                var otherPlayer = players[connID];
+                if (otherPlayer.sid != conn.id){ //if not new player in server player list
+                    unicast(conn,                //send to new player
+                        {
+                            type: "createRemotePlayer",
+                            playerID: otherPlayer.pid,
+                            x: otherPlayer.x,
+                            y: otherPlayer.y
+                        }
+                    );
+                }
+            }
+
+            // Send message to new player (the current client)
+            //unicast(conn, {type: "myID", playerID:PID});
         }
         else
         {
@@ -163,18 +205,18 @@ function Server()
             type: "update",
             //player 1 state
             p1: {
-                p1X:p1.character.getX(),
-                p1Y:p1.character.getY(),
-                p1VX:p1.character.getVX(),
-                p1VY:p1.character.getVY()
+                x:p1.character.getX(),
+                y:p1.character.getY(),
+                vX:p1.character.getVX(),
+                vY:p1.character.getVY()
             },
 
             //player 2 state
             p2: {
-                p2X:p2.character.getX(),
-                p2Y:p2.character.getY(),
-                p2VX:p2.character.getVX(),
-                p2VY:p2.character.getVY()
+                x:p2.character.getX(),
+                y:p2.character.getY(),
+                vX:p2.character.getVX(),
+                vY:p2.character.getVY()
             }
 
 
@@ -202,10 +244,11 @@ function Server()
     
     function update(conn,message)
     {
+        //console.log("player" + conn.id);
         players[conn.id].character.setX(message.x);
         players[conn.id].character.setY(message.y);
-        //players[conn.id].character.setVX(message.vX);
-       // players[conn.id].character.setVY(message.vY);
+        players[conn.id].character.setVX(message.vX);
+        players[conn.id].character.setVY(message.vY);
     }
 	
     function playing()

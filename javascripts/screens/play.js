@@ -13,17 +13,40 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
 
-        // Helper function to return one of our remote players
-        var playerById = function(id) {
-            var i;
+    },
+    onNewPlayer: function(data, isLocal) {
+        var newPlayerName = "";
+        if (isLocal){
+            newPlayerName = "player";
+        }
+        else {
+            newPlayerName = "opponent";
+        }
 
-            for (i = 0; i < global.state.remotePlayers.length; i++) {
-                if (global.state.remotePlayers[i].id == id)
-                    return global.state.remotePlayers[i];
-            };
+        // When a new player connects, we create their object and add them to the screen.
+        var newPlayer = new game.PlayerEntity(data.x, data.y, {
+            spritewidth: 70,
+            spriteheight: 95,
+            name: newPlayerName
+        });
+        newPlayer.id = data.playerID;
+        newPlayer.name = data.playerID;
 
-            return false;
-        };
+        if (isLocal){
+            global.state.localPlayer = newPlayer;
+            global.state.playername = data.playerID;
+            me.game.add(global.state.localPlayer, 4);
+            me.game.sort();
+        }
+        else {
+            global.state.remotePlayers.push(newPlayer);
+            me.game.add(newPlayer, 3);
+            me.game.sort(game.sort);
+        }
+
+
+        // Update the HUD with the new number of players
+        //me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
     },
     onLevelLoaded : function (name) {
         console.log("[+] onLevelLoaded:");
@@ -37,7 +60,6 @@ game.PlayScreen = me.ScreenObject.extend({
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
 
-
         // Create our player and set them to be the local player (so we know who "we" are)
         global.state.localPlayer = new game.PlayerEntity(70, 910, {
             spritewidth: 70,
@@ -45,39 +67,29 @@ game.PlayScreen = me.ScreenObject.extend({
             name: "player"
         });
 
-        //global.state.localPlayer.name = global.state.playername;
-        //global.state.localPlayer.id = global.state.playername;
 
-        //me.game.entityPool.add("player", game.PlayerEntity);//global.state.localPlayer);
-        me.game.add(global.state.localPlayer, 4);
-        me.game.sort();
+
+        // Start Connection to server
         try{
-            // Connect to the game server
             this.socket = new SockJS("http://" + global.network.host + ":" + global.network.port + "/game");
             this.socket.onmessage = function(e){
+
                 var message = JSON.parse(e.data);
-                //console.log("message type: " + message.type);
                 switch (message.type) {
                     case "message":
 
                         break;
                     case "update":
                         if (global.state.playername == 1){
-                            //.state.localPlayer.pos.x = message.p1.p1X;
-                            //global.state.localPlayer.pos.y = message.p1.p1Y;
-                            //console.log("update P2 x: " + message.p2.p2X + " y: " + message.p2.p2Y);
-                            global.state.remotePlayers[0].pos.x = message.p2.p2X;
-                            global.state.remotePlayers[0].pos.y = message.p2.p2Y;
+                            setPlayerPos(global.state.remotePlayers[0], message.p2);
+                            console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p2.x + "," + message.p2.y);
                         }
                         else if (global.state.playername == 2){
-                            //global.state.localPlayer.pos.x = message.p2.p2X;
-                            //global.state.localPlayer.pos.y = message.p2.p2Y;
-                            //console.log("update P1 x: " + message.p1.p1X + " y: " + message.p1.p1Y);
-                            global.state.remotePlayers[0].pos.x = message.p1.p1X;
-                            global.state.remotePlayers[0].pos.y = message.p1.p1Y;
+                            setPlayerPos(global.state.remotePlayers[0], message.p1);
+                            console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p1.x + "," + message.p1.y);
                         }
-                        //console.log("recevied server UPDATE");
                     break;
+
                     //get local player ID - 1,2,3,4 from server after connecting
                     case "myID":
                         console.log("received myID: " + message.playerID);
@@ -85,17 +97,22 @@ game.PlayScreen = me.ScreenObject.extend({
                         global.state.playername = message.playerID;
                         global.state.localPlayer.name =  message.playerID;
                     break;
-                    case "newPlayer":
-                        var newPlayerID = message.newPlayerID;
-                        if (global.state.remotePlayers.length == 0){
-                            if (global.state.localPlayer.id != newPlayerID){
-                                var data = {x: 1540, y: 140, id: newPlayerID, name : newPlayerID};
-                                onNewPlayer(data);
-                            }
-                            else if (global.state.localPlayer.id == 2){
-                                var data = {x: 1540, y: 140, id: 1, name : 1};
-                                onNewPlayer(data);
-                            }
+
+                    case "createLocalPlayer":
+
+                        if (global.state.localPlayer != undefined){
+                            var isLocal = true;
+                            game.playScreen.onNewPlayer(message, isLocal);
+                            console.log("Create local player: " + message.playerID);
+                        }
+                    break;
+
+                    case "createRemotePlayer":
+                        var remotePlayerID = message.playerID;
+                        if (!playerById(remotePlayerID)){
+                            var isLocal = false;
+                            game.playScreen.onNewPlayer(message, isLocal);
+                            console.log("Create remote player: " + remotePlayerID);
                         }
                     break;
                 }
@@ -137,25 +154,6 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.HUD.setItemValue("latency", global.network.latency);
     },
 
-    onNewPlayer: function(data) {
-        // When a new player connects, we create their object and add them to the screen.
-        var newPlayer = new game.PlayerEntity(data.x, data.y, {
-            spritewidth: 70,
-            spriteheight: 95,
-            name: "o"
-        });
-        newPlayer.id = data.id;
-        newPlayer.name = data.name;
-
-        global.state.remotePlayers.push(newPlayer);
-
-        me.game.add(newPlayer, 3);
-        me.game.sort(game.sort);
-
-        // Update the HUD with the new number of players
-        //me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
-    },
-
     onRemovePlayer: function(data) {
         // When a player disconnects, we find them in our remote players array
         var removePlayer = playerById(data.id);
@@ -191,21 +189,20 @@ game.PlayScreen = me.ScreenObject.extend({
     }
 });
 
-var onNewPlayer = function(data) {
-    // When a new player connects, we create their object and add them to the screen.
-    var newPlayer = new game.PlayerEntity(data.x, data.y, {
-        spritewidth: 70,
-        spriteheight: 95,
-        name: "o"
-    });
-    newPlayer.id = data.id;
-    newPlayer.name = data.name;
+var setPlayerPos = function (playerObj, playerMessageFromServer){
+    playerObj.pos.x = playerMessageFromServer.x;
+    playerObj.pos.y = playerMessageFromServer.y
+    playerObj.vel.x = playerMessageFromServer.vX;
+    playerObj.vel.y = playerMessageFromServer.vY;
+}
+// Helper function to return one of our remote players
+var playerById = function(id) {
+    var i;
 
-    global.state.remotePlayers.push(newPlayer);
+    for (i = 0; i < global.state.remotePlayers.length; i++) {
+        if (global.state.remotePlayers[i].id == id)
+            return global.state.remotePlayers[i];
+    };
 
-    me.game.add(newPlayer, 3);
-    me.game.sort(game.sort);
-
-    // Update the HUD with the new number of players
-    //me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
+    return false;
 };
