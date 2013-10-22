@@ -72,7 +72,7 @@ game.PlayScreen = me.ScreenObject.extend({
             name: "player"
         });
         */
-
+        this.gameStart = false;
 
         // Start Connection to server
         try{

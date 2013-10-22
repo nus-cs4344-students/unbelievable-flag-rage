@@ -16,7 +16,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.parent(x,y, settings);
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(8,22);
+        this.setVelocity(10,22);
         this.vel.x = 0;
         this.vel.y = 0;
 
@@ -43,6 +43,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
         // define a basic walking animatin
         this.renderable.addAnimation ("walk",  ["p1_walk01.png", "p1_walk02.png", "p1_walk03.png"]);
+                                                //" p1_walk04.png"]);/*, "p1_walk05.png", "p1_walk06.png",
+                                                //"p1_walk07.png", "p1_walk08.png", "p1_walk09.png"]);
+                                                //"p1_walk10.png", "p1_walk11.png"]);*/
         // set as default
         this.renderable.setCurrentAnimation("walk");
 
@@ -85,28 +88,30 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
             if (me.input.isKeyPressed('start')){
                 sendToServer({type: "start"});
+                game.playScreen.gameStart = true;
                 console.log("send server START");
             }
         }
 
         //check and update player movement
         this.updateMovement();
-        var result = this.parent();
+        //var result = this.parent();
+
         // update animation if necessary
-        if (this.vel.x!=0 || this.vel.y!=0 || (this.renderable && this.renderable.isFlickering())) {
+        if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
 
             if (this.vel.x !== 0) {
                 this.flipX(this.vel.x < 0);
             }
 
             // update object animation
-            //var result = this.parent();
-            //return result;
+            var result = this.parent();
+
                     //console.log("send x: " + global.state.localPlayer.pos.x + " y: " + global.state.localPlayer.pos.y);
         }
         // send local player state to server
-        if (this.name == global.state.playername){
-            if (this.step == 0){
+        if (this.name == global.state.playername && game.playScreen.gameStart){
+            //if (this.step == 0){
                 this.sendToServer({
                     type: "update",
                     x: global.state.localPlayer.pos.x,
@@ -114,13 +119,14 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     vX: global.state.localPlayer.vel.x,
                     vY: global.state.localPlayer.vel.y
                 });
-            } //if (this.step)..
+            //} //if (this.step)..
+            if (this.step++ > 3)
+                this.step = 0;
         }
-        if (this.step++ > 3)
-            this.step = 0;
+
          // else inform the engine we did not perform
         // any update (e.g. position, animation)
-        return result;
+        return true;
     },
     sendToServer : function (msg){
         /*  usage example
