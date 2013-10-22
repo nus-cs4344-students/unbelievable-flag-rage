@@ -149,6 +149,8 @@ function Server()
             var playerPos = playerPosAssigning(PID);
             var playerPosX = xStartPos(playerPos);
             var playerPosY = yStartPos(playerPos);
+            console.log ("PID: "+ PID + " playerPos: " + playerPos );
+
 
             // Create player object and insert into players with key = conn.id
             players[conn.id] = new Player(conn.id, PID, playerPosX, playerPosY);

@@ -25,7 +25,7 @@ var game = {
         me.sys.pauseOnBlur = false;
         me.sys.stopOnBlur = false;
 
-        if (!me.video.init("jsapp", 1680, 1680, true, 'auto')) {
+        if (!me.video.init("jsapp", 800, 600, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");
             return;
         }

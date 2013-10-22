@@ -16,16 +16,18 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.parent(x,y, settings);
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(4,22);
+        this.setVelocity(8,22);
         this.vel.x = 0;
         this.vel.y = 0;
 
         // adjust bonding box for collision
         //this.updateColRect(-1, 0, 10, 11);
 
-        //set display to follow out position on both axis
-        me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-
+        //set display to follow out position on both axis only if local player
+        if (settings.isLocal){
+            me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+        }
+        //console.log("viewport follow" + this.id + this.name + ": (" + this.pos.x + ", " + this.pos.y + ")");
         //set position
         //this.pos.x = 1222;
         //this.pos.y = 955;

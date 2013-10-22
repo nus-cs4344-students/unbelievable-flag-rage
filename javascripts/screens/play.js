@@ -27,21 +27,25 @@ game.PlayScreen = me.ScreenObject.extend({
         var newPlayer = new game.PlayerEntity(data.x, data.y, {
             spritewidth: 70,
             spriteheight: 95,
-            name: newPlayerName
+            name: newPlayerName,
+            isLocal: isLocal
         });
         newPlayer.id = data.playerID;
         newPlayer.name = data.playerID;
 
         if (isLocal){
             global.state.localPlayer = newPlayer;
-            global.state.playername = data.playerID;
+            global.state.playername = newPlayer.id;
+            console.log ("playername: " + global.state.playername);
+            console.log ("localPlayer id:" + global.state.localPlayer.id + " name:" + global.state.localPlayer.name);
             me.game.add(global.state.localPlayer, 4);
             me.game.sort();
         }
         else {
             global.state.remotePlayers.push(newPlayer);
+            console.log("remotePlayer id: " + newPlayer.id + " name: " + newPlayer.name);
             me.game.add(newPlayer, 3);
-            me.game.sort(game.sort);
+            me.game.sort();
         }
 
 
@@ -60,13 +64,14 @@ game.PlayScreen = me.ScreenObject.extend({
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
 
+        /*
         // Create our player and set them to be the local player (so we know who "we" are)
         global.state.localPlayer = new game.PlayerEntity(70, 910, {
             spritewidth: 70,
             spriteheight: 95,
             name: "player"
         });
-
+        */
 
 
         // Start Connection to server
@@ -82,11 +87,11 @@ game.PlayScreen = me.ScreenObject.extend({
                     case "update":
                         if (global.state.playername == 1){
                             setPlayerPos(global.state.remotePlayers[0], message.p2);
-                            console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p2.x + "," + message.p2.y);
+                            //console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p2.x + "," + message.p2.y);
                         }
                         else if (global.state.playername == 2){
                             setPlayerPos(global.state.remotePlayers[0], message.p1);
-                            console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p1.x + "," + message.p1.y);
+                            //console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p1.x + "," + message.p1.y);
                         }
                     break;
 
@@ -100,7 +105,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
                     case "createLocalPlayer":
 
-                        if (global.state.localPlayer != undefined){
+                        if (global.state.localPlayer == undefined){
                             var isLocal = true;
                             game.playScreen.onNewPlayer(message, isLocal);
                             console.log("Create local player: " + message.playerID);
