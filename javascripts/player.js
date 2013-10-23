@@ -88,7 +88,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
             if (me.input.isKeyPressed('start')){
                 sendToServer({type: "start"});
-                game.playScreen.gameStart = true;
+                //game.playScreen.gameStart = true;
                 console.log("send server START");
             }
         }

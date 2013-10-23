@@ -72,7 +72,7 @@ game.PlayScreen = me.ScreenObject.extend({
             name: "player"
         });
         */
-        this.gameStart = false;
+        this.gameStart = true;
 
         // Start Connection to server
         try{
@@ -85,6 +85,27 @@ game.PlayScreen = me.ScreenObject.extend({
 
                         break;
                     case "update":
+                        var updateArr = [];
+                        updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
+                        updateArr.push(message.p2); // i = 1
+                        updateArr.push(message.p3); // i = 2
+                        updateArr.push(message.p4); // i = 3
+
+                        for (var i = 0; i < updateArr.length; i ++){
+                            var updateMsg = updateArr[i];
+                            if (global.state.localPlayer.id == i + 1){
+                                setPlayerPos(global.state.localPlayer, updateMsg);
+                            }
+                            else{
+                                var remotePlayer = remotePlayerById(i + 1);
+                                var remotePlayerUpdateMsg = updateArr[remotePlayer.id - 1];
+                                if (remotePlayer == undefined || remotePlayerUpdateMsg == undefined){
+                                    console.log("i: " + i);
+                                }
+                                setPlayerPos(remotePlayer, remotePlayerUpdateMsg);
+                            }
+                        }
+                        /*
                         if (global.state.playername == 1){
                             setPlayerPos(global.state.remotePlayers[0], message.p2);
                             //console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p2.x + "," + message.p2.y);
@@ -93,6 +114,7 @@ game.PlayScreen = me.ScreenObject.extend({
                             setPlayerPos(global.state.remotePlayers[0], message.p1);
                             //console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p1.x + "," + message.p1.y);
                         }
+                        */
                     break;
 
                     //get local player ID - 1,2,3,4 from server after connecting
@@ -114,7 +136,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
                     case "createRemotePlayer":
                         var remotePlayerID = message.playerID;
-                        if (!playerById(remotePlayerID)){
+                        if (!remotePlayerById(remotePlayerID)){
                             var isLocal = false;
                             game.playScreen.onNewPlayer(message, isLocal);
                             console.log("Create remote player: " + remotePlayerID);
@@ -161,7 +183,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
     onRemovePlayer: function(data) {
         // When a player disconnects, we find them in our remote players array
-        var removePlayer = playerById(data.id);
+        var removePlayer = remotePlayerById(data.id);
 
         if(!removePlayer) {
             console.log("Player not found "+data.id);
@@ -179,7 +201,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
     onMovePlayer: function(data) {
         // When a player moves, we get that players object
-        var playerToMove = playerById(data.id);
+        var playerToMove = remotePlayerById(data.id);
 
         // if it isn't us, or we can't find it (bad!)
         if(!playerToMove) {
@@ -201,7 +223,7 @@ var setPlayerPos = function (playerObj, playerMessageFromServer){
     playerObj.vel.y = playerMessageFromServer.vY;
 }
 // Helper function to return one of our remote players
-var playerById = function(id) {
+var remotePlayerById = function(id) {
     var i;
 
     for (i = 0; i < global.state.remotePlayers.length; i++) {

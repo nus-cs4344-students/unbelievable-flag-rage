@@ -219,22 +219,24 @@ function Server()
                 y:p2.character.getY(),
                 vX:p2.character.getVX(),
                 vY:p2.character.getVY()
+            },
+
+            //player 3 state
+            p3: {
+                x:p3.character.getX(),
+                y:p3.character.getY(),
+                vX:p3.character.getVX(),
+                vY:p3.character.getVY()
+            },
+
+            //player 4 state
+            p4: {
+                x:p4.character.getX(),
+                y:p4.character.getY(),
+                vX:p4.character.getVX(),
+                vY:p4.character.getVY()
             }
-
-
-            /*//player 1 state
-            p3X:p3.character.getX(),
-            p3Y:p3.character.getY(),
-            p3VX:p3.character.getVX(),
-            p3VY:p3.character.getVY(),
-
-            //player 1 state
-            p4X:p4.character.getX(),
-            p4Y:p4.character.getY(),
-            p4VX:p4.character.getVX(),
-            p4VY:p4.character.getVY()*/
         });
-
     }
     /*****************************   GAME STATE METHODS   *****************************/
 

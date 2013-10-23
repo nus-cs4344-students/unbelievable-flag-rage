@@ -11,7 +11,7 @@ game.lobbyScreen = me.ScreenObject.extend({
         socket.on("pong", this.updateLatency);
 
         // Helper function to return one of our remote players
-        playerById = function(id) {
+        remotePlayerById = function(id) {
             var i;
 
             for (i = 0; i < global.state.remotePlayers.length; i++) {
@@ -73,7 +73,7 @@ game.lobbyScreen = me.ScreenObject.extend({
 
     onRemovePlayer: function(data) {
         // When a player disconnects, we find them in our remote players array
-        var removePlayer = playerById(data.id);
+        var removePlayer = remotePlayerById(data.id);
 
         if(!removePlayer) {
             console.log("Player not found "+data.id);
