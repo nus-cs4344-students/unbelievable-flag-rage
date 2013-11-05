@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-web: javascripts/server/Server.js
-=======
 web: node javascripts/server/Server.js
->>>>>>> e9b34cfe8909f2316c3545fca72b533979091403
+
