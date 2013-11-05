@@ -9,21 +9,25 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
     /* constructor */
     init: function(x,y, settings){
+
+        //call constructor
+        this.parent(x,y, settings);
+
         /* Player Properties */
         this.alwaysUpdate = true;
         this.step = 0;
         this.stepShoot = 0;
         this.stepAmmo = 0;
-        //call constructor
-        this.parent(x,y, settings);
+        this.collidable = true;
+        this.health = 100;
+        this.canShoot = true;
+        this.ammo = 3;
+        this.direction = "right";
 
         //set default horizontal & vertical speed (accel vector)
         this.setVelocity(10,22);
         this.vel.x = 0;
         this.vel.y = 0;
-        this.canShoot = true;
-        this.ammo = 3;
-        this.direction = "right";
 
         // adjust bonding box for collision
         //this.updateColRect(-1, 0, 10, 11);
@@ -111,8 +115,13 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     me.game.add(bullet, this.z);
                     me.game.sort.defer();
                     global.aliveBulletCount++;
-                    //TODO: add 3 ammo to player
-                    //util.updateAmmo(-1);
+
+                    this.sendToServer({
+                        type: "playerShoot",
+                        bulletX: bullet.pos.x,
+                        bulletY: bullet.pos.y,
+                        bulletVX: bullet.vel.x
+                    });
                     //me.audio.play("shoot");
                 }
             } // if (keyPressed('shoot'))

@@ -106,16 +106,6 @@ game.PlayScreen = me.ScreenObject.extend({
                                 setPlayerPos(remotePlayer, remotePlayerUpdateMsg);
                             }
                         }
-                        /*
-                        if (global.state.playername == 1){
-                            setPlayerPos(global.state.remotePlayers[0], message.p2);
-                            //console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p2.x + "," + message.p2.y);
-                        }
-                        else if (global.state.playername == 2){
-                            setPlayerPos(global.state.remotePlayers[0], message.p1);
-                            //console.log("remotePlayer: " + global.state.remotePlayers[0].pos.x +"," + global.state.remotePlayers[0].pos.y + " (" + message.p1.x + "," + message.p1.y);
-                        }
-                        */
                     break;
 
                     //get local player ID - 1,2,3,4 from server after connecting
@@ -142,6 +132,22 @@ game.PlayScreen = me.ScreenObject.extend({
                             game.playScreen.onNewPlayer(message, isLocal);
                             console.log("Create remote player: " + remotePlayerID);
                         }
+                    break;
+                    case "playerShoot":
+                        console.log("received playerShoot");
+                        var direction = "";
+                        if (message.bulletVX < 0){
+                            direction = "left";
+                        }
+                        else direction = "right";
+                        var opponentBullet = new game.BulletEntity(message.bulletX, message.bulletY, direction);
+                        me.game.add(opponentBullet);
+                        me.game.sort();
+
+                        break;
+                    case "gotHit":
+                        global.state.localPlayer.health -= 20;
+                        console.log(global.state.localPlayer.id + "got hit");
                     break;
                 }
             }

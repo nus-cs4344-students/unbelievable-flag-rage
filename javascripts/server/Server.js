@@ -11,6 +11,8 @@ var LIB_PATH = "./";
 require(LIB_PATH + "Player.js");
 require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
+require(LIB_PATH + "Hitbox.js");
+require(LIB_PATH + "Bullet.js");
 
 function Server()
 {
@@ -22,7 +24,7 @@ function Server()
     var players;                                // Associative array for players, indexed via socket ID
     var p1, p2,p3,p4;                           // Player 1,2,3 and 4
     var p1Status,p2Status,p3Status,p4Status;    // Player 1,2,3 and 4 status (taken or empty)
-
+    var bullets;
 
     /*****************************   SENDING MESSAGE METHODS   *****************************/
     //private method: broadcast(msg)
@@ -198,9 +200,6 @@ function Server()
                     );
                 }
             }
-
-            // Send message to new player (the current client)
-            //unicast(conn, {type: "myID", playerID:PID});
         }
         else
         {
@@ -212,6 +211,23 @@ function Server()
     /*****************************   IN GAME (LOOP) METHODS   *****************************/
     function gameLoop()
     {
+        //temporary game state updates in game loop
+        for (var i = 0; i < bullets.length; i++){
+            var bullet = bullets[i];
+            var playerHit = bullet.moveOneStep();
+
+            if (playerHit != null){
+                unicast(sockets[playerHit],
+                    {
+                        type: "gotHit"
+                    }
+                );
+            }
+            if (bullet.getInvalid()){
+                bullets.splice(i,1);
+            }
+        }
+
         broadcast ({
             type: "update",
             //player 1 state
@@ -231,6 +247,7 @@ function Server()
             },
 
             //player 3 state
+
             p3: {
                 x:p3.character.getX(),
                 y:p3.character.getY(),
@@ -245,7 +262,16 @@ function Server()
                 vX:p4.character.getVX(),
                 vY:p4.character.getVY()
             }
+
         });
+
+        /*
+         * TODO: broadcast player who shot
+         *       players locally simulate bullet
+         *       server locally simulate bullet
+         *       if hit send to playerGotHit
+         */
+
     }
     /*****************************   GAME STATE METHODS   *****************************/
 
@@ -258,10 +284,29 @@ function Server()
     function update(conn,message)
     {
         //console.log("player" + conn.id);
+        var playerCharacter = players[conn.id].character;
+        playerCharacter.updatePosition(message.x, message.y, message.vX, message.vY);
+        /*
         players[conn.id].character.setX(message.x);
         players[conn.id].character.setY(message.y);
         players[conn.id].character.setVX(message.vX);
         players[conn.id].character.setVY(message.vY);
+        */
+    }
+
+    function playerShoot(conn,message)
+    {
+        var bullet = new Bullet (message.bulletX, message.bulletY, message.bulletVX);
+        bullets.push(bullet);
+        selectiveBroadcast(players[conn.id].pid, message);
+        // var playerId = players[conn.id].pid;
+        // bullets[playerId].push(bullet);
+    }
+
+    function checkBulletHit(){
+        for (var bullet in bullets){
+
+        }
     }
 	
     function playing()
@@ -283,6 +328,7 @@ function Server()
     {
     	// Everything is a OK
     	broadcast({type:"startGame"});
+        // TODO: might need separate gameState and sendUpdate loops
         gameInterval = setInterval(function() {gameLoop();}, 1000/Game.FRAME_RATE);
     }
 
@@ -324,6 +370,9 @@ function Server()
                 //console.log("server updating");
             	update(conn,message);
             	break;
+            case "playerShoot":
+                playerShoot(conn,message);
+                break;
             default:
                 console.log("Unhandled " + message.type);
         }
@@ -347,6 +396,7 @@ function Server()
         gameInterval = undefined;
         players = new Object;
         sockets = new Object;
+        bullets = [];
         p1Status = p2Status = p3Status = p4Status = "empty";
     }
 
@@ -463,6 +513,10 @@ function Server()
             console.log("Error: " + e);
         }
 
+    }
+
+    this.getPlayers = function (){
+        return players;
     }
 
 }//Server

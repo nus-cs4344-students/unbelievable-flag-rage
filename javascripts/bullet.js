@@ -20,19 +20,24 @@ game.BulletEntity = me.ObjectEntity.extend({
             this.parent(x - game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
         }
 
+        this.step = 0;
         this.name = "bullet";
-
+        this.collidable = false;
         this.direction = direction;
         this.gravity = 0;
         this.passedDist = 0;
-
         this.alwaysUpdate = true;
+
         this.configureVelocity();
     },
     update : function(){
         this.updateMovement();
         this.updatePassedDist();
         this.handleCollisions();
+        if (this.step == 3){
+            this.step = 0;
+
+        }
         return true;
     },
     configureVelocity: function(){
@@ -69,7 +74,7 @@ game.BulletEntity = me.ObjectEntity.extend({
     }
 });
 
-game.BulletEntity.SPEED = 15;
+game.BulletEntity.SPEED = 20;
 game.BulletEntity.WIDTH = 20;
 game.BulletEntity.OFFSET = 20;
 game.BulletEntity.RANGE = 800;
