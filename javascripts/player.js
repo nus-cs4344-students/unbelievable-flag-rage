@@ -112,8 +112,8 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     this.canShoot = false;
                     this.ammo--;
                     var bullet = new game.BulletEntity(this.pos.x, this.pos.y, this.direction);
-                    me.game.add(bullet, this.z);
-                    me.game.sort.defer();
+                    me.game.add(bullet,2);
+                    me.game.sort();
                     global.aliveBulletCount++;
 
                     this.sendToServer({

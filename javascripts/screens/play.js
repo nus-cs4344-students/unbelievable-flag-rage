@@ -38,13 +38,13 @@ game.PlayScreen = me.ScreenObject.extend({
             global.state.playername = newPlayer.id;
             console.log ("playername: " + global.state.playername);
             console.log ("localPlayer id:" + global.state.localPlayer.id + " name:" + global.state.localPlayer.name);
-            me.game.add(global.state.localPlayer, 4);
+            me.game.add(global.state.localPlayer, 2);
             me.game.sort();
         }
         else {
             global.state.remotePlayers.push(newPlayer);
             console.log("remotePlayer id: " + newPlayer.id + " name: " + newPlayer.name);
-            me.game.add(newPlayer, 3);
+            me.game.add(newPlayer, 2);
             me.game.sort();
         }
 
@@ -141,7 +141,7 @@ game.PlayScreen = me.ScreenObject.extend({
                         }
                         else direction = "right";
                         var opponentBullet = new game.BulletEntity(message.bulletX, message.bulletY, direction);
-                        me.game.add(opponentBullet);
+                        me.game.add(opponentBullet, 2);
                         me.game.sort();
 
                         break;

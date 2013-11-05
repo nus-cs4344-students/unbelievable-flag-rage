@@ -34,10 +34,8 @@ game.BulletEntity = me.ObjectEntity.extend({
         this.updateMovement();
         this.updatePassedDist();
         this.handleCollisions();
-        if (this.step == 3){
-            this.step = 0;
+        this.parent();
 
-        }
         return true;
     },
     configureVelocity: function(){
@@ -49,6 +47,7 @@ game.BulletEntity = me.ObjectEntity.extend({
     //handles bullet going out of screen
     updatePassedDist: function(){
         this.passedDist += game.BulletEntity.SPEED;
+        console.log("bullet passedDist: " + this.passedDist);
         if (this.passedDist > game.BulletEntity.RANGE){
             me.game.remove(this);
         }
