@@ -7,7 +7,7 @@
 
 "use strict";
 
-var LIB_PATH = "C:/Users/alaay/WebstormProjects/ufr/javascripts/server/";
+var LIB_PATH = "./";
 require(LIB_PATH + "Player.js");
 require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
@@ -47,6 +47,15 @@ function Server()
     {
         socket.write(JSON.stringify(msg));
     }
+
+    //send messages with delay
+    var delayUnicast = function (delay, socketID,states)
+    {
+        setTimeout(unicast(socketID, states),delay);
+
+    }
+
+
 
     /***************************   CREATING NEW PLAYER METHODS   *****************************/
     function playerIdAssigning ()
