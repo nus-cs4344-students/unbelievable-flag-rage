@@ -333,12 +333,16 @@ function Server()
     }
 
     function prepare()
+<<<<<<< HEAD
+    {   
+=======
     {
+>>>>>>> e9b34cfe8909f2316c3545fca72b533979091403
         if (gameInterval !== undefined) 
         {
         	playing();
         } 
-        else if (Object.keys(players).length < 2) 
+        else if (Object.keys(players).length < 4)
         {
         	notEnoughPlayer();
         }
