@@ -1,1 +1,3 @@
-.idea
+/.idea
+/dir
+/node_modules
