@@ -15,7 +15,8 @@ var global = {
         playername: "",
         localPlayer: undefined,
         remotePlayers: []
-    }
+    },
+   aliveBulletCount: 0
 };
 
 /* game namespace */
@@ -24,7 +25,7 @@ var game = {
 
         me.sys.pauseOnBlur = false;
         me.sys.stopOnBlur = false;
-
+        me.sys.alwaysUpdate = true;
         //game world is 1680 x 1580 px
         if (!me.video.init("jsapp", 800, 600, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");

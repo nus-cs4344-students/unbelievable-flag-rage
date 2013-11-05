@@ -14,7 +14,7 @@ game.resources = [
     // bullet
     {
         name: "bullet",
-        type: "png",
+        type: "image",
         src: "data/items/bullet.png"
     },
     //p1 walk spritesheet

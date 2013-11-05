@@ -13,7 +13,12 @@ game.BulletEntity = me.ObjectEntity.extend({
         var settings = {};
         settings.image = "bullet";
 
-        this.parent(x, y, settings);
+        if (direction == "right"){
+            this.parent(x + game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
+        }
+        else if (direction == "left"){
+            this.parent(x - game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
+        }
 
         this.name = "bullet";
 
@@ -21,6 +26,7 @@ game.BulletEntity = me.ObjectEntity.extend({
         this.gravity = 0;
         this.passedDist = 0;
 
+        this.alwaysUpdate = true;
         this.configureVelocity();
     },
     update : function(){
@@ -31,19 +37,19 @@ game.BulletEntity = me.ObjectEntity.extend({
     },
     configureVelocity: function(){
         if (this.direction == "right"){
-            this.vel.x = BulletEntity.SPEED;
+            this.vel.x = game.BulletEntity.SPEED;
         }
-        else this.vel.x = -BulletEntity.SPPED;
+        else this.vel.x = -game.BulletEntity.SPEED;
     },
     //handles bullet going out of screen
-    updatePassedDis: function(){
-        this.passedDist += BulletEntity.SPEED;
-        if (this.passedDist > BulletEntity.RANGE){
+    updatePassedDist: function(){
+        this.passedDist += game.BulletEntity.SPEED;
+        if (this.passedDist > game.BulletEntity.RANGE){
             me.game.remove(this);
         }
     },
     //handles bullet colliding with other entities
-    handleCollision: function(){
+    handleCollisions: function(){
         var collisionResult = me.game.collide(this);
         if (this.vel.x == 0 || (collisionResult && (collisionResult.obj.isSolid || collisionResult.obj.isDestroyable))){
             me.game.remove(this);
@@ -53,7 +59,7 @@ game.BulletEntity = me.ObjectEntity.extend({
         }
     },
     createExplosion: function(){
-        var explosion = new BulletExplosion(this.pos.x, this.pos.y - 5);
+        var explosion = new game.BulletExplosion(this.pos.x, this.pos.y - 5);
         me.game.add(explosion, this.z);
         me.game.sort.defer(); //as soon as stack idle, do sort.
         //TODO: me.audio.play("explosionSound")
@@ -65,4 +71,5 @@ game.BulletEntity = me.ObjectEntity.extend({
 
 game.BulletEntity.SPEED = 15;
 game.BulletEntity.WIDTH = 20;
-game.BulletEntity.RANGE = 600;
+game.BulletEntity.OFFSET = 20;
+game.BulletEntity.RANGE = 800;

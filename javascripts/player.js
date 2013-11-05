@@ -12,6 +12,8 @@ game.PlayerEntity = me.ObjectEntity.extend({
         /* Player Properties */
         this.alwaysUpdate = true;
         this.step = 0;
+        this.stepShoot = 0;
+        this.stepAmmo = 0;
         //call constructor
         this.parent(x,y, settings);
 
@@ -19,6 +21,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.setVelocity(10,22);
         this.vel.x = 0;
         this.vel.y = 0;
+        this.canShoot = true;
+        this.ammo = 3;
+        this.direction = "right";
 
         // adjust bonding box for collision
         //this.updateColRect(-1, 0, 10, 11);
@@ -57,9 +62,14 @@ game.PlayerEntity = me.ObjectEntity.extend({
     update: function(){
 
         if (this.name === global.state.playername){
+
+            this.updateCanShoot();
+            this.refillAmmo();
+
             if (me.input.isKeyPressed('left')){
                 //flip sprite on horizontal axis
                 this.flipX(true);
+                this.direction = "left";
                 //update entity velocity
                 this.vel.x -= this.accel.x * me.timer.tick;
 
@@ -67,7 +77,8 @@ game.PlayerEntity = me.ObjectEntity.extend({
             else if (me.input.isKeyPressed('right')){
                 //unflip sprite
                 this.flipX(false);
-                //update entitiy velocity
+                this.direction = "right";
+                //update entity velocity
                 this.vel.x += this.accel.x *me.timer.tick;
             }
             else {
@@ -91,14 +102,24 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 //game.playScreen.gameStart = true;
                 console.log("send server START");
             }
-            if (me.input.isKeyPressed('shoot')){
 
-            }
-        }
+            if (me.input.isKeyPressed('shoot')){
+                if (this.canShoot){
+                    this.canShoot = false;
+                    this.ammo--;
+                    var bullet = new game.BulletEntity(this.pos.x, this.pos.y, this.direction);
+                    me.game.add(bullet, this.z);
+                    me.game.sort.defer();
+                    global.aliveBulletCount++;
+                    //TODO: add 3 ammo to player
+                    //util.updateAmmo(-1);
+                    //me.audio.play("shoot");
+                }
+            } // if (keyPressed('shoot'))
+        } // if(this.name == globalPlayerName)
 
         //check and update player movement
         this.updateMovement();
-        //var result = this.parent();
 
         // update animation if necessary
         if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
@@ -109,8 +130,6 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
             // update object animation
             var result = this.parent();
-
-                    //console.log("send x: " + global.state.localPlayer.pos.x + " y: " + global.state.localPlayer.pos.y);
         }
         // send local player state to server
         if (this.name == global.state.playername && game.playScreen.gameStart){
@@ -137,8 +156,25 @@ game.PlayerEntity = me.ObjectEntity.extend({
          sendToServer(msg);
          */
         game.playScreen.socket.send(JSON.stringify(msg));
+    },
+    updateCanShoot: function(){
+        this.stepShoot++;
+        if (this.stepShoot == game.PlayerEntity.SHOOT_DELAY){
+            this.stepShoot = 0;
+            this.canShoot = true;
+        }
+    },
+    refillAmmo: function(){
+        this.stepAmmo++;
+        if (this.stepAmmo == game.PlayerEntity.REFILL_AMMO_DELAY){
+            this.stepAmmo = 0;
+            this.ammo++;
+        }
     }
 });
+
+game.PlayerEntity.SHOOT_DELAY = 100;
+game.PlayerEntity.REFILL_AMMO_DELAY = 150;
 
 var sendToServer = function(msg){
     game.playScreen.socket.send(JSON.stringify(msg));
