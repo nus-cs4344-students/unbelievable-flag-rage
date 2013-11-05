@@ -25,6 +25,7 @@ var game = {
         me.sys.pauseOnBlur = false;
         me.sys.stopOnBlur = false;
 
+        //game world is 1680 x 1580 px
         if (!me.video.init("jsapp", 800, 600, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");
             return;

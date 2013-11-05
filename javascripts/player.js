@@ -91,6 +91,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 //game.playScreen.gameStart = true;
                 console.log("send server START");
             }
+            if (me.input.isKeyPressed('shoot')){
+
+            }
         }
 
         //check and update player movement

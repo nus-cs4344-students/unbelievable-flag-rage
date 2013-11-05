@@ -11,6 +11,12 @@ game.resources = [
         type: "tmx",
         src: "data/map/simpleMap.tmx"
     },
+    // bullet
+    {
+        name: "bullet",
+        type: "png",
+        src: "data/items/bullet.png"
+    },
     //p1 walk spritesheet
     {
         name: "p1_walk",
