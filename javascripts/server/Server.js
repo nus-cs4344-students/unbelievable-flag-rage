@@ -227,43 +227,45 @@ function Server()
                 bullets.splice(i,1);
             }
         }
+        if (gameInterval!== undefined)
+        {
+            broadcast ({
+                type: "update",
+                //player 1 state
+                p1: {
+                    x:p1.character.getX(),
+                    y:p1.character.getY(),
+                    vX:p1.character.getVX(),
+                    vY:p1.character.getVY()
+                },
 
-        broadcast ({
-            type: "update",
-            //player 1 state
-            p1: {
-                x:p1.character.getX(),
-                y:p1.character.getY(),
-                vX:p1.character.getVX(),
-                vY:p1.character.getVY()
-            },
+                //player 2 state
+                p2: {
+                    x:p2.character.getX(),
+                    y:p2.character.getY(),
+                    vX:p2.character.getVX(),
+                    vY:p2.character.getVY()
+                },
 
-            //player 2 state
-            p2: {
-                x:p2.character.getX(),
-                y:p2.character.getY(),
-                vX:p2.character.getVX(),
-                vY:p2.character.getVY()
-            },
+                //player 3 state
 
-            //player 3 state
+                p3: {
+                    x:p3.character.getX(),
+                    y:p3.character.getY(),
+                    vX:p3.character.getVX(),
+                    vY:p3.character.getVY()
+                },
 
-            p3: {
-                x:p3.character.getX(),
-                y:p3.character.getY(),
-                vX:p3.character.getVX(),
-                vY:p3.character.getVY()
-            },
+                //player 4 state
+                p4: {
+                    x:p4.character.getX(),
+                    y:p4.character.getY(),
+                    vX:p4.character.getVX(),
+                    vY:p4.character.getVY()
+                }
 
-            //player 4 state
-            p4: {
-                x:p4.character.getX(),
-                y:p4.character.getY(),
-                vX:p4.character.getVX(),
-                vY:p4.character.getVY()
-            }
-
-        });
+            });
+        }
 
         /*
          * TODO: broadcast player who shot
@@ -277,7 +279,7 @@ function Server()
 
     function reset()
     {
-
+        gameInterval = undefined;
 
     }
     
