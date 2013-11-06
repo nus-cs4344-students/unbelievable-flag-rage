@@ -227,7 +227,7 @@ function Server()
                 bullets.splice(i,1);
             }
         }
-        if (gameInterval!== undefined)
+        if (gameInterval !== undefined)
         {
             broadcast ({
                 type: "update",
@@ -266,7 +266,6 @@ function Server()
 
             });
         }
-
         /*
          * TODO: broadcast player who shot
          *       players locally simulate bullet
@@ -282,7 +281,7 @@ function Server()
         gameInterval = undefined;
 
     }
-    
+
     function update(conn,message)
     {
         //console.log("player" + conn.id);
@@ -335,7 +334,6 @@ function Server()
     }
 
     function prepare()
-
     {
         if (gameInterval !== undefined) 
         {
