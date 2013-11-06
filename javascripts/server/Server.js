@@ -511,7 +511,7 @@ function Server()
         var httpServer = http.createServer(app);
         sock.installHandlers(httpServer, {prefix:'/game'});
         httpServer.listen(process.env.PORT||Game.PORT);
-        app.use(express.static(__dirname),'dist');
+        app.use(express.static(__dirname),'unbelievable-flag-rage');
             //startServerAndListenForConnection(express,http,sock);
         }
 
