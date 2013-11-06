@@ -22,7 +22,7 @@ game.BulletEntity = me.ObjectEntity.extend({
 
         this.step = 0;
         this.name = "bullet";
-        this.collidable = false;
+        this.collidable = true;
         this.direction = direction;
         this.gravity = 0;
         this.passedDist = 0;
@@ -59,7 +59,7 @@ game.BulletEntity = me.ObjectEntity.extend({
             me.game.remove(this);
         }
         if (collisionResult && collisionResult.obj.isSolid){
-            this.createExplosion();
+            //this.createExplosion();
         }
     },
     createExplosion: function(){

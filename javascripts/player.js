@@ -18,6 +18,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.step = 0;
         this.stepShoot = 0;
         this.stepAmmo = 0;
+        this.isSolid = true;
         this.collidable = true;
         this.health = 100;
         this.canShoot = true;
