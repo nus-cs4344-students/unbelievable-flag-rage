@@ -470,7 +470,7 @@ function Server()
         var app = express();
         var httpServer = http.createServer(app);
         sock.installHandlers(httpServer, {prefix:'/game'});
-        httpServer.listen(Game.PORT, '0.0.0.0');
+        httpServer.listen(process.env.PORT||Game.PORT);
         app.use(express.static(__dirname));
     }
 
