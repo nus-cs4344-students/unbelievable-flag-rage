@@ -466,12 +466,12 @@ function Server()
 
     function startServerAndListenForConnection(express,http,sock)
     {
-        // Standard code to starts the server and listen for connection
+       // Standard code to starts the server and listen for connection
         var app = express();
         var httpServer = http.createServer(app);
         sock.installHandlers(httpServer, {prefix:'/game'});
         httpServer.listen(process.env.PORT||Game.PORT);
-        app.use(express.static(__dirname));
+        app.use(express.static(__dirname)); 
     }
 
 
@@ -505,7 +505,14 @@ function Server()
                 
             });// socket.on("connection"
 
-            startServerAndListenForConnection(express,http,sock);
+			
+			// Standard code to starts the server and listen for connection
+        var app = express();
+        var httpServer = http.createServer(app);
+        sock.installHandlers(httpServer, {prefix:'/game'});
+        httpServer.listen(process.env.PORT||Game.PORT);
+        app.use(express.static(__dirname));
+            //startServerAndListenForConnection(express,http,sock);
         }
 
         catch (e)
