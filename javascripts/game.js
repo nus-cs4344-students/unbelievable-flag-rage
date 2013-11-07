@@ -4,7 +4,7 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
-        host: "localhost",
+        host: "172.24.168.152",
         port: 4344,
         totlatency: 0,
         latency: 0,
