@@ -56,7 +56,17 @@ function Server()
         setTimeout(unicast(socketID, states),delay);
 
     }
+    //broadcast with delay
+    var delayBroadcast = function (msg)
+    {
+        var id;
+        for(id in sockets)
+        {
+            setTimeout(unicast(sockets[id], msg),players[id].delay);
+        }
 
+
+    }
 
 
     /***************************   CREATING NEW PLAYER METHODS   *****************************/

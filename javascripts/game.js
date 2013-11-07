@@ -5,7 +5,7 @@ var global = {
     DEBUG: true,
     network: {
         host: "localhost",
-        port: process.env.PORT || 4344,
+        port: 4344,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
