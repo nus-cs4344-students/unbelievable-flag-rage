@@ -86,6 +86,7 @@ function Bullet(xPos, yPos, vX)
         if (moveX < 0){
             moveDist = moveX * -1;
         }
+        else moveDist = moveX;
         this.passedDist += moveDist;
 
         //check if bullet is valid

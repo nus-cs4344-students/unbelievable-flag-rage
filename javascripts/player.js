@@ -183,8 +183,8 @@ game.PlayerEntity = me.ObjectEntity.extend({
     }
 });
 
-game.PlayerEntity.SHOOT_DELAY = 100;
-game.PlayerEntity.REFILL_AMMO_DELAY = 150;
+game.PlayerEntity.SHOOT_DELAY = 50;
+game.PlayerEntity.REFILL_AMMO_DELAY = 100;
 
 var sendToServer = function(msg){
     game.playScreen.socket.send(JSON.stringify(msg));
