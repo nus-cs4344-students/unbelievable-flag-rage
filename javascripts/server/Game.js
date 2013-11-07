@@ -13,8 +13,8 @@ var Game = {
     PLAYER_TOP_START_POS_Y: 140,     // player top y-coord
     PLAYER_BOTTOM_START_POS_Y: 910, // player bottom y-coord
     FRAME_RATE : 60,			    // frame rate of game
-    //SERVER_NAME : "localhost"	    // server name of game
-    SERVER_NAME : "172.24.168.152"	// server name of game
+    SERVER_NAME : "localhost"	    // server name of game
+    //SERVER_NAME : "172.28.179.28"	// server name of game
 }
 
 // For node.js require
