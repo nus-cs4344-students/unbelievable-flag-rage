@@ -56,7 +56,17 @@ function Server()
         setTimeout(unicast(socketID, states),delay);
 
     }
+    //broadcast with delay
+    var delayBroadcast = function (msg)
+    {
+        var id;
+        for(id in sockets)
+        {
+            setTimeout(unicast(sockets[id], msg),players[id].delay);
+        }
 
+
+    }
 
 
     /***************************   CREATING NEW PLAYER METHODS   *****************************/
@@ -228,44 +238,45 @@ function Server()
                 bullets.splice(i,1);
             }
         }
+        if (gameInterval !== undefined)
+        {
+            broadcast ({
+                type: "update",
+                //player 1 state
+                p1: {
+                    x:p1.character.getX(),
+                    y:p1.character.getY(),
+                    vX:p1.character.getVX(),
+                    vY:p1.character.getVY()
+                },
 
-        broadcast ({
-            type: "update",
-            //player 1 state
-            p1: {
-                x:p1.character.getX(),
-                y:p1.character.getY(),
-                vX:p1.character.getVX(),
-                vY:p1.character.getVY()
-            },
+                //player 2 state
+                p2: {
+                    x:p2.character.getX(),
+                    y:p2.character.getY(),
+                    vX:p2.character.getVX(),
+                    vY:p2.character.getVY()
+                },
 
-            //player 2 state
-            p2: {
-                x:p2.character.getX(),
-                y:p2.character.getY(),
-                vX:p2.character.getVX(),
-                vY:p2.character.getVY()
-            },
+                //player 3 state
 
-            //player 3 state
+                p3: {
+                    x:p3.character.getX(),
+                    y:p3.character.getY(),
+                    vX:p3.character.getVX(),
+                    vY:p3.character.getVY()
+                },
 
-            p3: {
-                x:p3.character.getX(),
-                y:p3.character.getY(),
-                vX:p3.character.getVX(),
-                vY:p3.character.getVY()
-            },
+                //player 4 state
+                p4: {
+                    x:p4.character.getX(),
+                    y:p4.character.getY(),
+                    vX:p4.character.getVX(),
+                    vY:p4.character.getVY()
+                }
 
-            //player 4 state
-            p4: {
-                x:p4.character.getX(),
-                y:p4.character.getY(),
-                vX:p4.character.getVX(),
-                vY:p4.character.getVY()
-            }
-
-        });
-
+            });
+        }
         /*
          * TODO: broadcast player who shot
          *       players locally simulate bullet
@@ -278,10 +289,10 @@ function Server()
 
     function reset()
     {
-
+        gameInterval = undefined;
 
     }
-    
+
     function update(conn,message)
     {
         //console.log("player" + conn.id);
@@ -335,7 +346,6 @@ function Server()
     }
 
     function prepare()
-
     {
         if (gameInterval !== undefined) 
         {
@@ -469,12 +479,12 @@ function Server()
 
     function startServerAndListenForConnection(express,http,sock)
     {
-        // Standard code to starts the server and listen for connection
+       // Standard code to starts the server and listen for connection
         var app = express();
         var httpServer = http.createServer(app);
         sock.installHandlers(httpServer, {prefix:'/game'});
-        httpServer.listen(Game.PORT, '0.0.0.0');
-        app.use(express.static(__dirname));
+        httpServer.listen(process.env.PORT||Game.PORT);
+        app.use(express.static(__dirname)); 
     }
 
 
@@ -508,7 +518,14 @@ function Server()
                 
             });// socket.on("connection"
 
-            startServerAndListenForConnection(express,http,sock);
+			
+			// Standard code to starts the server and listen for connection
+        var app = express();
+        var httpServer = http.createServer(app);
+        sock.installHandlers(httpServer, {prefix:'/game'});
+        httpServer.listen(process.env.PORT||Game.PORT);
+        app.use(express.static(__dirname));
+            //startServerAndListenForConnection(express,http,sock);
         }
 
         catch (e)
