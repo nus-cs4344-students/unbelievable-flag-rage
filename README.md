@@ -1,11 +1,14 @@
 unbelievable-flag-rage
 ======================
 Done by:
-\nDavid
-\nAli
-\nChen Fei
+David
+
+Ali
+
+Chen Fei
 
 Notes for hosting on heroku
 ===========================
-node_modules needed for heroku
-\nServer.js has to be in root to work
+<node_modules needed for heroku>
+
+<Server.js has to be in root to work>
