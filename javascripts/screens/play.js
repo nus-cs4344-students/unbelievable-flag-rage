@@ -76,8 +76,9 @@ game.PlayScreen = me.ScreenObject.extend({
         this.gameStart = true;
 
         // Start Connection to server
+
         try{
-            this.socket = new SockJS("http://" + global.network.host + ":" + global.network.port + "/game");
+            this.socket = new SockJS("http://unbelievable-flag-rage.herokuapp.com/");
             this.socket.onmessage = function(e){
 
                 var message = JSON.parse(e.data);
