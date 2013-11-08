@@ -22,6 +22,7 @@ function Bullet(xPos, yPos, vX)
     var isInvalid;
 
     // Constructor
+    var getTimestamp = function() { return new Date().getTime(); };
     var that = this; // Unused in Bullet for now.
     this.x = xPos;
     this.y = yPos;
@@ -30,6 +31,7 @@ function Bullet(xPos, yPos, vX)
     this.passedDist = 0;
     range = 800;
     isInvalid = false;
+    lastUpdate = getTimestamp();
     /*****************************   SET METHODS   *****************************/
     this.setX = function(newX)
     {
@@ -71,9 +73,8 @@ function Bullet(xPos, yPos, vX)
         return isInvalid;
     }
     /*************************** UPDATE STATE METHODS **************************/
-    var getTimestamp = function() { return new Date().getTime(); };
 
-    this.moveOneStep = function() {
+    this.moveOneStep = function(players) {
         var now = getTimestamp(); // get the current time in millisecond resolution
 
         //Delay compensation
@@ -81,22 +82,31 @@ function Bullet(xPos, yPos, vX)
 
         // Update position
         var moveX =  vX*(now - lastUpdate)*Game.FRAME_RATE/1000;
-        this.passedDist += moveX;
+        var moveDist = 0;
+        if (moveX < 0){
+            moveDist = moveX * -1;
+        }
+        else moveDist = moveX;
+        this.passedDist += moveDist;
 
         //check if bullet is valid
-        if (this.passedDist < range){
+        if (this.passedDist < range && !isInvalid){
             that.x += moveX;
 
             lastUpdate = now;
-            var players = Server.getPlayers();
 
-            for (var player in players){
+            for (var connId in players){
+                var player = players[connId];
+                console.log("bullet checking player hit: " + player.pid);
+                console.log("bullet x: " + this.x + " y: " + this.y);
                 var isHit = player.character.checkGotHit(this.x, this.y);
                 if (isHit){
+                    console.log("bullet reports it hit! ++++++++++++++++++++++++++++ playerID: " + player.pid);
+                    isInvalid = true;
                     return player.pid;
                 }
-                else return null;
             }
+            return null;
         }
         else {
             isInvalid = true;

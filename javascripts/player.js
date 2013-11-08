@@ -18,6 +18,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.step = 0;
         this.stepShoot = 0;
         this.stepAmmo = 0;
+        this.isSolid = true;
         this.collidable = true;
         this.health = 100;
         this.canShoot = true;
@@ -182,8 +183,8 @@ game.PlayerEntity = me.ObjectEntity.extend({
     }
 });
 
-game.PlayerEntity.SHOOT_DELAY = 100;
-game.PlayerEntity.REFILL_AMMO_DELAY = 150;
+game.PlayerEntity.SHOOT_DELAY = 50;
+game.PlayerEntity.REFILL_AMMO_DELAY = 100;
 
 var sendToServer = function(msg){
     game.playScreen.socket.send(JSON.stringify(msg));
