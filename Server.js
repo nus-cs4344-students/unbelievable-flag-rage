@@ -7,7 +7,7 @@
 
 "use strict";
 
-var LIB_PATH = "./";
+var LIB_PATH = "./javascripts/server/";
 require(LIB_PATH + "Player.js");
 require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
