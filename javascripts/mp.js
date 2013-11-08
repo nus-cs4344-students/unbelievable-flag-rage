@@ -5,7 +5,12 @@ var Multiplayer = Object.extend({
     //takes in a player object
     init : function (newPlayer) {
         /* init mp communication variables */
-        this.socket = new SockJS("http://" + "localhost" + ":" + "63342" + "/ufr");
+//this.socket = new SockJS("http://" + "localhost" + ":" + "63342" + "/ufr");
+		
+		var host = location.origin.replace(/^http/, 'ws')
+		var ws = new WebSocket(host);
+
+
         this.newPlayer = newPlayer;
         this.playerId = newPlayer.GUID;
 
@@ -25,7 +30,7 @@ var Multiplayer = Object.extend({
         // Attempts to connect to game server
         try {
             //this.socket = new SockJS("http://" + "localhost" + ":" + "63342" + "/ufr");
-            this.socket.onmessage = function (e) {
+            ws.onmessage = function (e) {
                 var message = JSON.parse(e.data);
                 switch (message.type) {
                     case "message":
@@ -53,6 +58,6 @@ var Multiplayer = Object.extend({
             msg = { type: "update", x: player.pos.x, y: player.pos.y};
             sendToServer(msg);
          */
-        this.socket.send(JSON.stringify(msg));
+        ws.send(JSON.stringify(msg));
     }
 });

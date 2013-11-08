@@ -498,11 +498,25 @@ function Server()
     {
         try
         {
-            var express = require('express');
-            var http = require('http');
-            var sockjs = require('sockjs');
-            var sock = sockjs.createServer();
+//var express = require('express');
+//var http = require('http');
+//var sockjs = require('sockjs');
+//var sock = sockjs.createServer();
 
+var WebSocketServer = require('ws').Server
+  , http = require('http')
+  , express = require('express')
+  , app = express()
+  , port = process.env.PORT || Game.PORT;
+
+app.use(express.static(__dirname + '/'));
+
+var server = http.createServer(app);
+server.listen(port);
+			
+var sock = new WebSocketServer({server: server});	
+
+		
             // reinitialize
             reinitialize ();
 
@@ -517,11 +531,7 @@ function Server()
 
 			
 			// Standard code to starts the server and listen for connection
-        var app = express();
-        var httpServer = http.createServer(app);
-        sock.installHandlers(httpServer, {prefix:'/game'});
-        httpServer.listen(process.env.PORT||Game.PORT);
-        app.use(express.static(__dirname));
+
             //startServerAndListenForConnection(express,http,sock);
         }
 
