@@ -24,6 +24,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.canShoot = true;
         this.ammo = 3;
         this.direction = "right";
+        this.hasFlag = false;
 
         //set default horizontal & vertical speed (accel vector)
         this.setVelocity(10,22);
@@ -52,10 +53,12 @@ game.PlayerEntity = me.ObjectEntity.extend({
         ]);
 
         // define a basic walking animatin
-        this.renderable.addAnimation ("walk",  ["p1_walk01.png", "p1_walk02.png", "p1_walk03.png"]);
+        this.renderable.addAnimation ("walk",  [0, 1, 2, 3,4,5,6,7,8,9,10],3);
                                                 //" p1_walk04.png"]);/*, "p1_walk05.png", "p1_walk06.png",
                                                 //"p1_walk07.png", "p1_walk08.png", "p1_walk09.png"]);
                                                 //"p1_walk10.png", "p1_walk11.png"]);*/
+        this.renderable.addAnimation("shoot", [1],2);
+
         // set as default
         this.renderable.setCurrentAnimation("walk");
 
@@ -110,6 +113,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
             if (me.input.isKeyPressed('shoot')){
                 if (this.canShoot){
+                    console.log("+++++++++++ player shot " + this.direction);
+                    this.renderable.setCurrentAnimation("shoot");
+                    this.renderable.setCurrentAnimation("walk");
                     this.canShoot = false;
                     this.ammo--;
                     var bullet = new game.BulletEntity(this.pos.x, this.pos.y, this.direction);
@@ -128,6 +134,13 @@ game.PlayerEntity = me.ObjectEntity.extend({
             } // if (keyPressed('shoot'))
         } // if(this.name == globalPlayerName)
 
+        // check if player near flag
+        if (global.state.flag){
+            if (global.state.flag.x - 10  <= this.pos.x <= global.state.flag.x + 10 &&
+                global.state.flag.y - 10  <= this.pos.y <= global.state.flag.y + 10) {
+                this.pickUp("flag");
+            }
+        }
         //check and update player movement
         this.updateMovement();
 
@@ -151,7 +164,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     vX: global.state.localPlayer.vel.x,
                     vY: global.state.localPlayer.vel.y
                 });
-            //} //if (this.step)..
+
             if (this.step++ > 3)
                 this.step = 0;
         }
@@ -180,10 +193,25 @@ game.PlayerEntity = me.ObjectEntity.extend({
             this.stepAmmo = 0;
             this.ammo++;
         }
+    },
+    pickUp: function(item){
+        if (item == "flag"){
+            global.state.flag.getPickUp(this);
+            this.hasFlag = true;
+            this.sendToServer({
+                type: "pickUpFlag",
+                hasFlag: this.hasFlag,
+                x: this.pos.x,
+                y: this.pos.y
+            })
+        }
+        else if (item == "powerup"){
+
+        }
     }
 });
 
-game.PlayerEntity.SHOOT_DELAY = 50;
+game.PlayerEntity.SHOOT_DELAY = 1;
 game.PlayerEntity.REFILL_AMMO_DELAY = 100;
 
 var sendToServer = function(msg){

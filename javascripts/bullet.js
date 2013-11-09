@@ -14,10 +14,10 @@ game.BulletEntity = me.ObjectEntity.extend({
         settings.image = "bullet";
 
         if (direction == "right"){
-            this.parent(x + game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
+            this.parent(x + game.BulletEntity.OFFSET, y, settings);
         }
         else if (direction == "left"){
-            this.parent(x - game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
+            this.parent(x - game.BulletEntity.OFFSET, y, settings);
         }
 
         this.step = 0;
@@ -49,6 +49,7 @@ game.BulletEntity = me.ObjectEntity.extend({
         this.passedDist += game.BulletEntity.SPEED;
         console.log("bullet passedDist: " + this.passedDist);
         if (this.passedDist > game.BulletEntity.RANGE){
+            console.log("bullet passedDist: " + this.passedDist);
             me.game.remove(this);
         }
     },
@@ -75,5 +76,5 @@ game.BulletEntity = me.ObjectEntity.extend({
 
 game.BulletEntity.SPEED = 20;
 game.BulletEntity.WIDTH = 20;
-game.BulletEntity.OFFSET = 20;
+game.BulletEntity.OFFSET = 70;
 game.BulletEntity.RANGE = 800;

@@ -149,6 +149,16 @@ game.PlayScreen = me.ScreenObject.extend({
                         global.state.localPlayer.health -= 20;
                         console.log(global.state.localPlayer.id + "got hit");
                     break;
+                    case "spawnFlag":
+                        var flag = new game.FlagEntity(message.flagX, message.flagY);
+                        global.state.flag = flag;
+                        me.game.add(flag, 3);
+                        me.game.sort();
+                    case "startGame":
+                        var flag = new game.FlagEntity(message.flagX, message.flagY);
+                        global.state.flag = flag;
+                        me.game.add(flag, 3);
+                        me.game.sort();
                 }
             }
         } catch (e){

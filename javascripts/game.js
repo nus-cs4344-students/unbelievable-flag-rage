@@ -1,6 +1,6 @@
 var global = {
-    WIDTH: 1136,
-    HEIGHT: 640,
+    WIDTH: 1610,
+    HEIGHT: 1050,
     DOUBLE: true,
     DEBUG: true,
     network: {
@@ -14,7 +14,8 @@ var global = {
     state: {
         playername: "",
         localPlayer: undefined,
-        remotePlayers: []
+        remotePlayers: [],
+        flag: undefined
     },
    aliveBulletCount: 0
 };

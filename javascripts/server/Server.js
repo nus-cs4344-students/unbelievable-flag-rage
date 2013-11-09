@@ -13,7 +13,7 @@ require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
 require(LIB_PATH + "Hitbox.js");
 require(LIB_PATH + "Bullet.js");
-
+require(LIB_PATH + "Flag.js");
 function Server()
 {
     // Private Variables
@@ -25,7 +25,7 @@ function Server()
     var p1, p2,p3,p4;                           // Player 1,2,3 and 4
     var p1Status,p2Status,p3Status,p4Status;    // Player 1,2,3 and 4 status (taken or empty)
     var bullets;
-
+    var flag;
     /*****************************   SENDING MESSAGE METHODS   *****************************/
     //private method: broadcast(msg)
     var broadcast = function (msg)
@@ -222,6 +222,7 @@ function Server()
     function gameLoop()
     {
         //temporary game state updates in game loop
+        // Broadcasts Player that got hit
         for (var i = 0; i < bullets.length; i++){
             var bullet = bullets[i];
             var playerHit = bullet.moveOneStep(players); //player id
@@ -277,12 +278,6 @@ function Server()
 
             });
         }
-        /*
-         * TODO: broadcast player who shot
-         *       players locally simulate bullet
-         *       server locally simulate bullet
-         *       if hit send to playerGotHit
-         */
 
     }
     /*****************************   GAME STATE METHODS   *****************************/
@@ -316,6 +311,15 @@ function Server()
         // bullets[playerId].push(bullet);
     }
 
+    function playerPickUpFlag(conn, message){
+        var player = players[conn.id];
+        if (!player.character.hasFlag){
+            if( player.character.x )
+            player.hasFlag = true;
+        }
+
+    }
+
     function checkBulletHit(){
         for (var bullet in bullets){
 
@@ -339,8 +343,14 @@ function Server()
     
     function startGame()
     {
+        // send flag spawn point to clients
+        flag = new Flag();
     	// Everything is a OK
-    	broadcast({type:"startGame"});
+    	broadcast({
+            type:"startGame",
+            flagX: flag.x,
+            flagY: flag.y
+        });
         // TODO: might need separate gameState and sendUpdate loops
         gameInterval = setInterval(function() {gameLoop();}, 1000/Game.FRAME_RATE);
     }
@@ -387,6 +397,9 @@ function Server()
                 console.log("received playerShot" + players[conn.id].pid);
                 playerShoot(conn,message);
                 break;
+            case "pickUpFlag":
+                console.log("player" + players[conn.id].pid + "has picked up flag");
+                playerPickUpFlag(conn,message);
             default:
                 console.log("Unhandled " + message.type);
         }

@@ -17,6 +17,12 @@ game.resources = [
         type: "image",
         src: "data/items/bullet.png"
     },
+    // flag
+    {
+        name: "flag",
+        type: "image",
+        src: "data/items/flag.png"
+    },
     //p1 walk spritesheet
     {
         name: "p1_walk",
