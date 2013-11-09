@@ -7,7 +7,7 @@
 
 "use strict";
 
-var LIB_PATH = "./";
+var LIB_PATH = "./javascripts/server/";
 require(LIB_PATH + "Player.js");
 require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
@@ -224,9 +224,10 @@ function Server()
         //temporary game state updates in game loop
         for (var i = 0; i < bullets.length; i++){
             var bullet = bullets[i];
-            var playerHit = bullet.moveOneStep();
+            var playerHit = bullet.moveOneStep(players); //player id
 
             if (playerHit != null){
+                console.log("playerHit" + playerHit);
                 unicast(sockets[playerHit],
                     {
                         type: "gotHit"
@@ -296,6 +297,7 @@ function Server()
     {
         //console.log("player" + conn.id);
         var playerCharacter = players[conn.id].character;
+        console.log("received update from player " + players[conn.id].pid);
         playerCharacter.updatePosition(message.x, message.y, message.vX, message.vY);
         /*
         players[conn.id].character.setX(message.x);
@@ -382,6 +384,7 @@ function Server()
             	update(conn,message);
             	break;
             case "playerShoot":
+                console.log("received playerShot" + players[conn.id].pid);
                 playerShoot(conn,message);
                 break;
             default:

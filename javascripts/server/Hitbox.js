@@ -72,8 +72,12 @@ function Hitbox(xPos, yPos){
    /*****************************   PUBLIC METHODS   *****************************/
 
     this.checkCollide = function(objPosX, objPosY){
-        if ( this.getXrange()[0] <= objPosX <= this.getXrange()[1] &&
-             this.getYrange()[0] <= objPosY <= this.getXrange()[1]){
+
+        if ( this.getXrange()[0] <= objPosX && objPosX <= this.getXrange()[1] &&
+             this.getYrange()[0] <= objPosY && objPosY <= this.getYrange()[1]){
+            console.log("bullet Pos: " + objPosX + " , " + objPosY);
+            console.log("x - range : " + this.getXrange()[0] + " , " + this.getXrange()[1]);
+            console.log("y - range : " + this.getYrange()[0] + " , " + this.getYrange()[1]);
             return true;
         }
         else return false;

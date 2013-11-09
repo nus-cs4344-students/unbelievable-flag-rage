@@ -35,7 +35,7 @@ var game = {
         me.sys.stopOnBlur = false;
         me.sys.alwaysUpdate = true;
         //game world is 1680 x 1580 px
-        if (!me.video.init("jsapp", 800, 600, true, 'auto')) {
+        if (!me.video.init("jsapp", 1080, 800, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");
             return;
         }
@@ -57,7 +57,7 @@ var game = {
 
         //load texture for player
         game.player1Texture = new me.TextureAtlas(me.loader.getJSON("p1_walk"), me.loader.getImage("p1_walk"));
-        me.debug.renderHitBox = true;
+        me.debug.renderHitBox = false;
         // start the game
         me.state.change(me.state.PLAY);
     }
