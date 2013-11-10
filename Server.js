@@ -520,12 +520,8 @@ function Server()
 
 			
 			// Standard code to starts the server and listen for connection
-        var app = express();
-        var httpServer = http.createServer(app);
-        sock.installHandlers(httpServer, {prefix:'/game'});
-        httpServer.listen(process.env.PORT||Game.PORT);
-        app.use(express.static(__dirname));
-            //startServerAndListenForConnection(express,http,sock);
+
+            startServerAndListenForConnection(express,http,sock);
         }
 
         catch (e)
