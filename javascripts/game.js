@@ -20,7 +20,8 @@ var global = {
 };
 
 /* game namespace */
-var game = {
+var game =
+{
 
     /**
      * an object where to store game global data
