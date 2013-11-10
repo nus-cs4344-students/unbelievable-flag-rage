@@ -41,7 +41,20 @@ game.PlayScreen = me.ScreenObject.extend({
             me.game.add(global.state.localPlayer, 2);
             me.game.sort();
         }
-        else {
+        else {    if(playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)
+    {
+        playerObj.pos.y = playerMessageFromServer.y;
+        playerObj.pos.x = playerMessageFromServer.x;
+    }
+
+//    if(playerObj.pos.x - playerMessageFromServer.x > 100 || playerObj.pos.x - playerMessageFromServer.x < -100)
+//    {
+//        playerObj.pos.y = playerMessageFromServer.y;
+//        playerObj.pos.x = playerMessageFromServer.x;
+//    }
+
+    playerObj.vel.x = playerMessageFromServer.vX;
+    playerObj.vel.y = playerMessageFromServer.vY;
             global.state.remotePlayers.push(newPlayer);
             console.log("remotePlayer id: " + newPlayer.id + " name: " + newPlayer.name);
             me.game.add(newPlayer, 2);
@@ -268,18 +281,29 @@ game.PlayScreen = me.ScreenObject.extend({
         }
 
         // update the players position locally
-        playerToMove.pos.x = data.x;
-        playerToMove.pos.y = data.y;
-        playerToMove.vel.x = data.vX;
-        playerToMove.vel.y = data.vY;
+//        playerToMove.pos.x = data.x;
+//        playerToMove.pos.y = data.y;
+//        playerToMove.vel.x = data.vX;
+//        playerToMove.vel.y = data.vY;
     }
 });
 
 var setPlayerPos = function (playerObj, playerMessageFromServer){
-    playerObj.pos.x = playerMessageFromServer.x;
-    playerObj.pos.y = playerMessageFromServer.y
+    if(playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)
+    {
+        playerObj.pos.y = playerMessageFromServer.y;
+        playerObj.pos.x = playerMessageFromServer.x;
+    }
+
+//    if(playerObj.pos.x - playerMessageFromServer.x > 100 || playerObj.pos.x - playerMessageFromServer.x < -100)
+//    {
+//        playerObj.pos.y = playerMessageFromServer.y;
+//        playerObj.pos.x = playerMessageFromServer.x;
+//    }
+
     playerObj.vel.x = playerMessageFromServer.vX;
     playerObj.vel.y = playerMessageFromServer.vY;
+
 }
 // Helper function to return one of our remote players
 var remotePlayerById = function(id) {
