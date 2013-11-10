@@ -183,6 +183,11 @@ game.PlayerEntity = me.ObjectEntity.extend({
     }
 });
 
+
+
+
+
+
 game.PlayerEntity.SHOOT_DELAY = 50;
 game.PlayerEntity.REFILL_AMMO_DELAY = 100;
 

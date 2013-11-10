@@ -94,10 +94,10 @@ game.PlayScreen = me.ScreenObject.extend({
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
-                            if (global.state.localPlayer.id == i + 1){
-                                setPlayerPos(global.state.localPlayer, updateMsg);
-                            }
-                            else{
+//                            if (global.state.localPlayer.id == (i + 1)  ){
+//                                setPlayerPos(global.state.localPlayer, updateMsg);
+//                            }
+                            if(global.state.localPlayer.id != i + 1){
                                 var remotePlayer = remotePlayerById(i + 1);
                                 var remotePlayerUpdateMsg = updateArr[remotePlayer.id - 1];
                                 if (remotePlayer == undefined || remotePlayerUpdateMsg == undefined){
