@@ -89,8 +89,8 @@ game.PlayScreen = me.ScreenObject.extend({
                         var updateArr = [];
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
-                        //updateArr.push(message.p3); // i = 2
-                        //updateArr.push(message.p4); // i = 3
+                        updateArr.push(message.p3); // i = 2
+                        updateArr.push(message.p4); // i = 3
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];

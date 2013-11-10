@@ -373,7 +373,7 @@ function Server()
         {
         	playing();
         }
-        
+
         else if (Object.keys(players).length < 4)
         {
         	notEnoughPlayer();
