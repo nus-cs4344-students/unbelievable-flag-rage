@@ -6,7 +6,6 @@
  * Time: 6:52 PM
  */
 
-
 // me => Melon Engine
 //Loads simpleMap whenever entering state of being on this screen
 game.PlayScreen = me.ScreenObject.extend({
@@ -90,8 +89,8 @@ game.PlayScreen = me.ScreenObject.extend({
                         var updateArr = [];
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
-                        updateArr.push(message.p3); // i = 2
-                        updateArr.push(message.p4); // i = 3
+                        //updateArr.push(message.p3); // i = 2
+                        //updateArr.push(message.p4); // i = 3
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
@@ -141,14 +140,66 @@ game.PlayScreen = me.ScreenObject.extend({
                             direction = "left";
                         }
                         else direction = "right";
-                        var opponentBullet = new game.BulletEntity(message.bulletX, message.bulletY, direction);
+                        var isOpponent = true;
+                        var opponentBullet = new game.BulletEntity(message.bulletX, message.bulletY, direction, isOpponent);
                         me.game.add(opponentBullet, 2);
                         me.game.sort();
 
                         break;
                     case "gotHit":
-                        global.state.localPlayer.health -= 20;
-                        console.log(global.state.localPlayer.id + "got hit");
+                        if (global.state.localPlayer.id == message.pid){
+                            if (global.state.localPlayer.health > 0){
+                                //global.state.localPlayer.health -= 20;
+                                var newHealth = message.health;
+                                console.log("server: " + global.state.localPlayer.id + "got hit. health: " + newHealth);
+                            }
+                            else {
+                                global.state.localPlayer.renderable.flicker(90);
+                                me.game.remove(global.state.localPlayer);
+                            }
+                        }
+                        else {
+                            var opponentHit = remotePlayerById(message.pid);
+                            if (!opponentHit.flickering){
+                                opponentHit.renderable.flicker(3);
+                            }
+
+                        }
+                    break;
+                    case "spawnFlag":
+                        console.log("Client Spawn Flag at " + message.flagX + ", " + message.flagY);
+                        var flag = new game.FlagEntity(message.flagX, message.flagY);
+                        global.state.flag = flag;
+                        me.game.add(flag, 3);
+                        me.game.sort();
+                    break;
+
+                    case "playerPickUpFlag":
+                        console.log("Player" + message.pid + "has the FLAG!");
+                        global.state.flag.visible = false;
+                        global.state.flag.collidable = false;
+                        if (global.state.localPlayer.id == message.pid){
+                            if (!global.state.localPlayer.hasFlag){
+                                global.state.localPlayer.hasFlag = true;
+                                global.state.flag.playerOwner = global.state.localPlayer;
+                            }
+                        }
+                        else {
+                            var flagCarrier = remotePlayerById(message.pid);
+                            flagCarrier.hasFlag = true;
+                            global.state.flag.playerOwner = flagCarrier;
+                        }
+                        global.state.flag = flag;
+                        me.game.add(flag, 3);
+                        me.game.sort();
+                        break;
+
+                    case "startGame":
+                        console.log("Client Start Flag at " + message.flagX + ", " + message.flagY);
+                        var flag = new game.FlagEntity(message.flagX, message.flagY);
+                        global.state.flag = flag;
+                        me.game.add(flag, 3);
+                        me.game.sort();
                     break;
                 }
             }
@@ -217,27 +268,16 @@ game.PlayScreen = me.ScreenObject.extend({
         }
 
         // update the players position locally
-       // playerToMove.pos.x = data.x;
-       // playerToMove.pos.y = data.y;
-       // playerToMove.vel.x = data.vX;
-       // playerToMove.vel.y = data.vY;
+        playerToMove.pos.x = data.x;
+        playerToMove.pos.y = data.y;
+        playerToMove.vel.x = data.vX;
+        playerToMove.vel.y = data.vY;
     }
 });
 
 var setPlayerPos = function (playerObj, playerMessageFromServer){
-
-    if(playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)
-    {
-        playerObj.pos.y = playerMessageFromServer.y;
-        playerObj.pos.x = playerMessageFromServer.x;
-    }
-
-//    if(playerObj.pos.x - playerMessageFromServer.x > 100 || playerObj.pos.x - playerMessageFromServer.x < -100)
-//    {
-//        playerObj.pos.y = playerMessageFromServer.y;
-//        playerObj.pos.x = playerMessageFromServer.x;
-//    }
-
+    playerObj.pos.x = playerMessageFromServer.x;
+    playerObj.pos.y = playerMessageFromServer.y
     playerObj.vel.x = playerMessageFromServer.vX;
     playerObj.vel.y = playerMessageFromServer.vY;
 }

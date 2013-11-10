@@ -1,11 +1,13 @@
 var global = {
-    WIDTH: 1136,
-    HEIGHT: 640,
+    WIDTH: 1610,
+    HEIGHT: 1050,
     DOUBLE: true,
     DEBUG: true,
     network: {
-        host: "unbelievable-flag-rage.herokuapp.com",
-        port: 80,
+        //host: "unbelievable-flag-rage.herokuapp.com",
+        host: "localhost",
+        port: "4344",
+        //port: 80,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
@@ -14,7 +16,8 @@ var global = {
     state: {
         playername: "",
         localPlayer: undefined,
-        remotePlayers: []
+        remotePlayers: [],
+        flag: undefined
     },
    aliveBulletCount: 0
 };

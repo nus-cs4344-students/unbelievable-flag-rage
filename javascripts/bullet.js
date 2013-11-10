@@ -9,16 +9,26 @@
 
 game.BulletEntity = me.ObjectEntity.extend({
 
-    init: function(x, y, direction){
+    init: function(x, y, direction, isOpponent){
         var settings = {};
         settings.image = "bullet";
+        if (isOpponent){
+            if (direction == "right"){
+                this.parent(x , y , settings);
+            }
+            else if (direction == "left"){
+                this.parent(x , y , settings);
+            }
+        }
+        else {
+            if (direction == "right"){
+                this.parent(x + game.BulletEntity.OFFSET, y + 70, settings);
+            }
+            else if (direction == "left"){
+                this.parent(x - game.BulletEntity.OFFSET, y + 70, settings);
+            }
+        }
 
-        if (direction == "right"){
-            this.parent(x + game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
-        }
-        else if (direction == "left"){
-            this.parent(x - game.BulletEntity.OFFSET, y + game.BulletEntity.OFFSET, settings);
-        }
 
         this.step = 0;
         this.name = "bullet";
@@ -27,6 +37,8 @@ game.BulletEntity = me.ObjectEntity.extend({
         this.gravity = 0;
         this.passedDist = 0;
         this.alwaysUpdate = true;
+        // make it a enemy object
+        this.type = me.game.ENEMY_OBJECT
 
         this.configureVelocity();
     },
@@ -47,8 +59,9 @@ game.BulletEntity = me.ObjectEntity.extend({
     //handles bullet going out of screen
     updatePassedDist: function(){
         this.passedDist += game.BulletEntity.SPEED;
-        console.log("bullet passedDist: " + this.passedDist);
+        //console.log("bullet passedDist: " + this.passedDist);
         if (this.passedDist > game.BulletEntity.RANGE){
+            ///console.log("bullet passedDist: " + this.passedDist);
             me.game.remove(this);
         }
     },
@@ -75,5 +88,5 @@ game.BulletEntity = me.ObjectEntity.extend({
 
 game.BulletEntity.SPEED = 20;
 game.BulletEntity.WIDTH = 20;
-game.BulletEntity.OFFSET = 20;
+game.BulletEntity.OFFSET = 70;
 game.BulletEntity.RANGE = 800;

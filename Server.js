@@ -13,7 +13,7 @@ require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
 require(LIB_PATH + "Hitbox.js");
 require(LIB_PATH + "Bullet.js");
-
+require(LIB_PATH + "Flag.js");
 function Server()
 {
     // Private Variables
@@ -25,7 +25,7 @@ function Server()
     var p1, p2,p3,p4;                           // Player 1,2,3 and 4
     var p1Status,p2Status,p3Status,p4Status;    // Player 1,2,3 and 4 status (taken or empty)
     var bullets;
-
+    var flag;
     /*****************************   SENDING MESSAGE METHODS   *****************************/
     //private method: broadcast(msg)
     var broadcast = function (msg)
@@ -222,15 +222,18 @@ function Server()
     function gameLoop()
     {
         //temporary game state updates in game loop
+        // Broadcasts Player that got hit
         for (var i = 0; i < bullets.length; i++){
             var bullet = bullets[i];
-            var playerHit = bullet.moveOneStep(players); //player id
+            var playerHit = bullet.moveOneStep(players); //player object that got hit
 
             if (playerHit != null){
-                console.log("playerHit" + playerHit);
-                unicast(sockets[playerHit],
+                console.log("playerHit" + playerHit.pid);
+                broadcast(
                     {
-                        type: "gotHit"
+                        type: "gotHit",
+                        pid: playerHit.pid,
+                        health: playerHit.character.health
                     }
                 );
             }
@@ -256,7 +259,7 @@ function Server()
                     y:p2.character.getY(),
                     vX:p2.character.getVX(),
                     vY:p2.character.getVY()
-                },
+                }/*,
 
                 //player 3 state
 
@@ -274,15 +277,9 @@ function Server()
                     vX:p4.character.getVX(),
                     vY:p4.character.getVY()
                 }
-
+                 */
             });
         }
-        /*
-         * TODO: broadcast player who shot
-         *       players locally simulate bullet
-         *       server locally simulate bullet
-         *       if hit send to playerGotHit
-         */
 
     }
     /*****************************   GAME STATE METHODS   *****************************/
@@ -316,6 +313,25 @@ function Server()
         // bullets[playerId].push(bullet);
     }
 
+    function playerPickUpFlag(conn, message){
+        var player = players[conn.id];
+        if (!player.character.hasFlag && !flag.playerOwner){
+            if( flag.x   <= player.character.x <= flag.x + 70 &&
+                flag.y   <= player.character.y <= flag.y + 70)
+            //if (flag.x == player.character.x &&
+            //    flag.y == player.character.y)
+                player.hasFlag = true;
+            broadcast(
+                {
+                    type: "playerPickUpFlag",
+                    pid: players[conn.id].pid
+                }
+            )
+        }
+
+
+    }
+
     function checkBulletHit(){
         for (var bullet in bullets){
 
@@ -339,8 +355,14 @@ function Server()
     
     function startGame()
     {
+        // send flag spawn point to clients
+        flag = new Flag();
     	// Everything is a OK
-    	broadcast({type:"startGame"});
+    	broadcast({
+            type:"startGame",
+            flagX: flag.x,
+            flagY: flag.y
+        });
         // TODO: might need separate gameState and sendUpdate loops
         gameInterval = setInterval(function() {gameLoop();}, 1000/Game.FRAME_RATE);
     }
@@ -350,11 +372,13 @@ function Server()
         if (gameInterval !== undefined) 
         {
         	playing();
-        } 
+        }
+        /*
         else if (Object.keys(players).length < 4)
         {
         	notEnoughPlayer();
         }
+        */
         else 
         {
         	startGame();
@@ -386,6 +410,10 @@ function Server()
             case "playerShoot":
                 console.log("received playerShot" + players[conn.id].pid);
                 playerShoot(conn,message);
+                break;
+            case "pickUpFlag":
+                console.log("player" + players[conn.id].pid + "has picked up flag");
+                playerPickUpFlag(conn,message);
                 break;
             default:
                 console.log("Unhandled " + message.type);
