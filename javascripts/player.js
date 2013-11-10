@@ -26,7 +26,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.direction = "right";
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(5,22);
+        this.setVelocity(2,22);
         this.vel.x = 0;
         this.vel.y = 0;
 
