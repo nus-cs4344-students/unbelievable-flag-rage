@@ -26,7 +26,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.direction = "right";
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(10,22);
+        this.setVelocity(5,22);
         this.vel.x = 0;
         this.vel.y = 0;
 
@@ -76,7 +76,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(true);
                 this.direction = "left";
                 //update entity velocity
-                this.vel.x -= this.accel.x *(me.timer.tick/50) ;
+                this.vel.x -= this.accel.x *(me.timer.tick/10) ;
 
 
 
@@ -86,7 +86,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(false);
                 this.direction = "right";
                 //update entity velocity
-                this.vel.x += this.accel.x *(me.timer.tick/50);
+                this.vel.x += this.accel.x *(me.timer.tick/10);
 
             }
             else {
