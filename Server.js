@@ -7,7 +7,7 @@
 
 "use strict";
 
-var LIB_PATH = "./";
+var LIB_PATH = "./javascripts/server/";
 require(LIB_PATH + "Player.js");
 require(LIB_PATH + "Character.js");
 require(LIB_PATH + "Game.js");
@@ -548,12 +548,8 @@ function Server()
 
 			
 			// Standard code to starts the server and listen for connection
-        var app = express();
-        var httpServer = http.createServer(app);
-        sock.installHandlers(httpServer, {prefix:'/game'});
-        httpServer.listen(process.env.PORT||Game.PORT);
-        app.use(express.static(__dirname));
-            //startServerAndListenForConnection(express,http,sock);
+
+            startServerAndListenForConnection(express,http,sock);
         }
 
         catch (e)

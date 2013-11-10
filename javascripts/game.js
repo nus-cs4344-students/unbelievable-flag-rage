@@ -4,8 +4,10 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
+        //host: "unbelievable-flag-rage.herokuapp.com",
         host: "localhost",
-        port: 4344,
+        port: "4344",
+        //port: 80,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
@@ -21,7 +23,16 @@ var global = {
 };
 
 /* game namespace */
-var game = {
+var game =
+{
+
+    /**
+     * an object where to store game global data
+     */
+    data : {
+        // score
+        score : 0
+    },
     onload: function() {
 
         me.sys.pauseOnBlur = false;

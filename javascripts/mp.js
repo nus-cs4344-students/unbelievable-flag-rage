@@ -5,7 +5,7 @@ var Multiplayer = Object.extend({
     //takes in a player object
     init : function (newPlayer) {
         /* init mp communication variables */
-        this.socket = new SockJS("http://" + "localhost" + ":" + "63342" + "/ufr");
+        this.socket = new SockJS();
         this.newPlayer = newPlayer;
         this.playerId = newPlayer.GUID;
 

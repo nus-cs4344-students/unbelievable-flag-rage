@@ -33,6 +33,11 @@ game.resources = [
         name: "p1_walk",
         type: "json",
         src: "data/player/p1_walk/p1_walk.json"
+    },
+    {
+        name: "32x32_font",
+        type:"image",
+        src: "data/player/32x32_font.png"
     }
 
 ];

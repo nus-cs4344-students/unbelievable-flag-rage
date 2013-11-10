@@ -71,29 +71,27 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
         if (this.name === global.state.playername){
 
-                this.updateCanShoot();
-                this.refillAmmo();
+            this.updateCanShoot();
+            this.refillAmmo();
 
-                if (me.input.isKeyPressed('left')){
-                    //flip sprite on horizontal axis
-                    this.flipX(true);
-                    this.direction = "left";
-                    //update entity velocity
-                    this.vel.x -= this.accel.x * me.timer.tick;
+            if (me.input.isKeyPressed('left')){
+                //flip sprite on horizontal axis
+                this.flipX(true);
+                this.direction = "left";
+                //update entity velocity
+                this.vel.x -= this.accel.x *(me.timer.tick/500) ;
 
-                }
-                else if (me.input.isKeyPressed('right')){
-                    //unflip sprite
-                    this.flipX(false);
-                    this.direction = "right";
-                    //update entity velocity
-                    this.vel.x += this.accel.x *me.timer.tick;
-                }
-                else {
-                    this.vel.x = 0;
-
-                }
-
+            }
+            else if (me.input.isKeyPressed('right')){
+                //unflip sprite
+                this.flipX(false);
+                this.direction = "right";
+                //update entity velocity
+                this.vel.x += this.accel.x *(me.timer.tick/500);
+            }
+            else {
+                this.vel.x = 0;
+            }
                 if (me.input.isKeyPressed('jump')){
                     //make sure we are not already jumping/falling
                     if (!this.jumping && !this.falling){
@@ -137,7 +135,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 } // if (keyPressed('shoot'))
             } // if(this.name == globalPlayerName)
 
-            // check if player near flag
+           // check if player near flag
            // if (global.state.flag){
            //     if (global.state.flag.pos.x - 10 <= this.pos.x <= global.state.flag.pos.x + 70 &&
            //         global.state.flag.pos.y - 10  <= this.pos.y <= global.state.flag.pos.x + 70) {
