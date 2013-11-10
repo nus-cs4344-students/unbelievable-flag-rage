@@ -26,7 +26,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.direction = "right";
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(2,22);
+        this.setVelocity(3,22);
         this.vel.x = 0;
         this.vel.y = 0;
 
@@ -99,7 +99,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 if (!this.jumping && !this.falling){
                     // set current vel to the maximum defined value
                     // gravity will then do the rest
-                    this.vel.y = -this.maxVel.y * me.timer.tick;
+                    this.vel.y = -this.maxVel.y * 5;
                     // set the jumping flag
                     this.jumping = true;
                 }
