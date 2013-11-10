@@ -4,8 +4,8 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
-        host: "http://unbelievable-flag-rage.herokuapp.com/",
-        port: 8000,
+        host: "unbelievable-flag-rage.herokuapp.com",
+        port: 80,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
