@@ -84,6 +84,7 @@ game.PlayScreen = me.ScreenObject.extend({
                 switch (message.type) {
                     case "message":
 
+                        
                         break;
                     case "update":
                         var updateArr = [];
