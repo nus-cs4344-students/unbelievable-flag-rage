@@ -15,7 +15,7 @@ function Character(xPos, yPos)
     this.vY;    // y-velocity of the Character
     this.hitbox;
     this.hasFlag;
-    var health;
+    this.health;
 
 
     // Constructor

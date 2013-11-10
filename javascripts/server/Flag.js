@@ -23,9 +23,10 @@ function Flag()
     function randomSpawn(){
         var yRange1 = 70*7;
         var yRange2 = 70*9;
-        var xRange = global.WIDTH;
+        var xRange1 = 300;
+        var xRange2 = Game.WIDTH - 300;
 
-        var randomX = randomFromInterval(1,xRange);
+        var randomX = randomFromInterval(xRange1,xRange2);
         var randomY = randomFromInterval(yRange1,yRange2);
         return {x: randomX, y :randomY};
     }

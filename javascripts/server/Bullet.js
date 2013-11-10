@@ -103,7 +103,7 @@ function Bullet(xPos, yPos, vX)
                 if (isHit){
                     console.log("bullet reports it hit! ++++++++++++++++++++++++++++ playerID: " + player.pid);
                     isInvalid = true;
-                    return player.pid;
+                    return player;
                 }
             }
             return null;

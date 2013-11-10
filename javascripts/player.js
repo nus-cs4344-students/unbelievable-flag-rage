@@ -71,104 +71,107 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
         if (this.name === global.state.playername){
 
-            this.updateCanShoot();
-            this.refillAmmo();
+                this.updateCanShoot();
+                this.refillAmmo();
 
-            if (me.input.isKeyPressed('left')){
-                //flip sprite on horizontal axis
-                this.flipX(true);
-                this.direction = "left";
-                //update entity velocity
-                this.vel.x -= this.accel.x * me.timer.tick;
+                if (me.input.isKeyPressed('left')){
+                    //flip sprite on horizontal axis
+                    this.flipX(true);
+                    this.direction = "left";
+                    //update entity velocity
+                    this.vel.x -= this.accel.x * me.timer.tick;
 
-            }
-            else if (me.input.isKeyPressed('right')){
-                //unflip sprite
-                this.flipX(false);
-                this.direction = "right";
-                //update entity velocity
-                this.vel.x += this.accel.x *me.timer.tick;
-            }
-            else {
-                this.vel.x = 0;
-
-            }
-
-            if (me.input.isKeyPressed('jump')){
-                //make sure we are not already jumping/falling
-                if (!this.jumping && !this.falling){
-                    // set current vel to the maximum defined value
-                    // gravity will then do the rest
-                    this.vel.y = -this.maxVel.y * me.timer.tick;
-                    // set the jumping flag
-                    this.jumping = true;
                 }
-            }//if (me.input.isKeyPressed('jump'))
+                else if (me.input.isKeyPressed('right')){
+                    //unflip sprite
+                    this.flipX(false);
+                    this.direction = "right";
+                    //update entity velocity
+                    this.vel.x += this.accel.x *me.timer.tick;
+                }
+                else {
+                    this.vel.x = 0;
 
-            if (me.input.isKeyPressed('start')){
-                sendToServer({type: "start"});
-                //game.playScreen.gameStart = true;
-                console.log("send server START");
+                }
+
+                if (me.input.isKeyPressed('jump')){
+                    //make sure we are not already jumping/falling
+                    if (!this.jumping && !this.falling){
+                        // set current vel to the maximum defined value
+                        // gravity will then do the rest
+                        this.vel.y = -this.maxVel.y * me.timer.tick;
+                        // set the jumping flag
+                        this.jumping = true;
+                    }
+                }//if (me.input.isKeyPressed('jump'))
+
+                if (me.input.isKeyPressed('start')){
+                    sendToServer({type: "start"});
+                    //game.playScreen.gameStart = true;
+                    console.log("send server START");
+                }
+
+                if (me.input.isKeyPressed('shoot')){
+                    if (this.canShoot){
+                        console.log("+++++++++++ player shot " + this.direction);
+                        this.renderable.setCurrentAnimation("shoot");
+                        this.renderable.setCurrentAnimation("walk");
+                        this.canShoot = false;
+                        this.ammo--;
+                        var isOpponent = false;
+                        var bullet = new game.BulletEntity(this.pos.x, this.pos.y, this.direction, false);
+                        me.game.add(bullet,2);
+                        me.game.sort();
+                        global.aliveBulletCount++;
+
+                        this.sendToServer({
+                            type: "playerShoot",
+                            bulletX: bullet.pos.x,
+                            bulletY: bullet.pos.y,
+                            bulletVX: bullet.vel.x
+                        });
+                        console.log("local player bullet: " + bullet.pos.x + bullet.pos.y) ;
+                        console.log("    player location: " + this.pos.x + this.pos.y);
+                        //me.audio.play("shoot");
+                    }
+                } // if (keyPressed('shoot'))
+            } // if(this.name == globalPlayerName)
+
+            // check if player near flag
+           // if (global.state.flag){
+           //     if (global.state.flag.pos.x - 10 <= this.pos.x <= global.state.flag.pos.x + 70 &&
+           //         global.state.flag.pos.y - 10  <= this.pos.y <= global.state.flag.pos.x + 70) {
+           //         this.pickUp("flag");
+           //     }
+           // }
+            //check and update player movement
+            this.updateMovement();
+            this.checkCollision();
+
+            // update animation if necessary
+            if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
+
+                if (this.vel.x !== 0) {
+                    this.flipX(this.vel.x < 0);
+                }
+
+                // update object animation
+                this.parent();
             }
-
-            if (me.input.isKeyPressed('shoot')){
-                if (this.canShoot){
-                    console.log("+++++++++++ player shot " + this.direction);
-                    this.renderable.setCurrentAnimation("shoot");
-                    this.renderable.setCurrentAnimation("walk");
-                    this.canShoot = false;
-                    this.ammo--;
-                    var bullet = new game.BulletEntity(this.pos.x, this.pos.y, this.direction);
-                    me.game.add(bullet,2);
-                    me.game.sort();
-                    global.aliveBulletCount++;
-
+            // send local player state to server
+            if (this.name == global.state.playername && game.playScreen.gameStart){
+                //if (this.step == 0){
                     this.sendToServer({
-                        type: "playerShoot",
-                        bulletX: bullet.pos.x,
-                        bulletY: bullet.pos.y,
-                        bulletVX: bullet.vel.x
+                        type: "update",
+                        x: global.state.localPlayer.pos.x,
+                        y: global.state.localPlayer.pos.y,
+                        vX: global.state.localPlayer.vel.x,
+                        vY: global.state.localPlayer.vel.y
                     });
-                    //me.audio.play("shoot");
-                }
-            } // if (keyPressed('shoot'))
-        } // if(this.name == globalPlayerName)
 
-        // check if player near flag
-        if (global.state.flag){
-            if (global.state.flag.x - 10  <= this.pos.x <= global.state.flag.x + 10 &&
-                global.state.flag.y - 10  <= this.pos.y <= global.state.flag.y + 10) {
-                this.pickUp("flag");
+                if (this.step++ > 3)
+                    this.step = 0;
             }
-        }
-        //check and update player movement
-        this.updateMovement();
-
-        // update animation if necessary
-        if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
-
-            if (this.vel.x !== 0) {
-                this.flipX(this.vel.x < 0);
-            }
-
-            // update object animation
-            var result = this.parent();
-        }
-        // send local player state to server
-        if (this.name == global.state.playername && game.playScreen.gameStart){
-            //if (this.step == 0){
-                this.sendToServer({
-                    type: "update",
-                    x: global.state.localPlayer.pos.x,
-                    y: global.state.localPlayer.pos.y,
-                    vX: global.state.localPlayer.vel.x,
-                    vY: global.state.localPlayer.vel.y
-                });
-
-            if (this.step++ > 3)
-                this.step = 0;
-        }
-
          // else inform the engine we did not perform
         // any update (e.g. position, animation)
         return true;
@@ -194,24 +197,38 @@ game.PlayerEntity = me.ObjectEntity.extend({
             this.ammo++;
         }
     },
-    pickUp: function(item){
-        if (item == "flag"){
-            global.state.flag.getPickUp(this);
-            this.hasFlag = true;
-            this.sendToServer({
-                type: "pickUpFlag",
-                hasFlag: this.hasFlag,
-                x: this.pos.x,
-                y: this.pos.y
-            })
-        }
-        else if (item == "powerup"){
-
+    // called by Flag CollectableEntity onCollision
+    checkCollision: function(){
+        var res = me.game.collide(this);
+        if (res){
+            switch (res.obj.type){
+                case me.game.COLLECTABLE_OBJECT: {
+                    this.hasFlag = true;
+                    this.sendToServer({
+                        type: "pickUpFlag",
+                        hasFlag: this.hasFlag,
+                        x: this.pos.x,
+                        y: this.pos.y
+                    });
+                    console.log("player " + this.id + "send pickUpFlag msg");
+                    break;
+                }
+                case me.game.ENEMY_OBJECT: {
+                    console.log("player detect got hit!");
+                    this.health -= 20;
+                    if (!this.flickering){
+                        this.renderable.flicker(3);
+                    }
+                    //server updates need to be stored
+                    //add checking with server updates for dead recokoning.
+                    break;
+                }
+            }
         }
     }
 });
 
-game.PlayerEntity.SHOOT_DELAY = 1;
+game.PlayerEntity.SHOOT_DELAY = 50;
 game.PlayerEntity.REFILL_AMMO_DELAY = 100;
 
 var sendToServer = function(msg){

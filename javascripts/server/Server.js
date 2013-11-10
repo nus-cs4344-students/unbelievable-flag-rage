@@ -225,13 +225,15 @@ function Server()
         // Broadcasts Player that got hit
         for (var i = 0; i < bullets.length; i++){
             var bullet = bullets[i];
-            var playerHit = bullet.moveOneStep(players); //player id
+            var playerHit = bullet.moveOneStep(players); //player object that got hit
 
             if (playerHit != null){
-                console.log("playerHit" + playerHit);
-                unicast(sockets[playerHit],
+                console.log("playerHit" + playerHit.pid);
+                broadcast(
                     {
-                        type: "gotHit"
+                        type: "gotHit",
+                        pid: playerHit.pid,
+                        health: playerHit.character.health
                     }
                 );
             }
@@ -257,7 +259,7 @@ function Server()
                     y:p2.character.getY(),
                     vX:p2.character.getVX(),
                     vY:p2.character.getVY()
-                },
+                }/*,
 
                 //player 3 state
 
@@ -275,7 +277,7 @@ function Server()
                     vX:p4.character.getVX(),
                     vY:p4.character.getVY()
                 }
-
+                 */
             });
         }
 
@@ -313,10 +315,20 @@ function Server()
 
     function playerPickUpFlag(conn, message){
         var player = players[conn.id];
-        if (!player.character.hasFlag){
-            if( player.character.x )
-            player.hasFlag = true;
+        if (!player.character.hasFlag && !flag.playerOwner){
+            if( flag.x   <= player.character.x <= flag.x + 70 &&
+                flag.y   <= player.character.y <= flag.y + 70)
+            //if (flag.x == player.character.x &&
+            //    flag.y == player.character.y)
+                player.hasFlag = true;
+            broadcast(
+                {
+                    type: "playerPickUpFlag",
+                    pid: players[conn.id].pid
+                }
+            )
         }
+
 
     }
 
@@ -360,11 +372,13 @@ function Server()
         if (gameInterval !== undefined) 
         {
         	playing();
-        } 
+        }
+        /*
         else if (Object.keys(players).length < 4)
         {
         	notEnoughPlayer();
         }
+        */
         else 
         {
         	startGame();
@@ -400,6 +414,7 @@ function Server()
             case "pickUpFlag":
                 console.log("player" + players[conn.id].pid + "has picked up flag");
                 playerPickUpFlag(conn,message);
+                break;
             default:
                 console.log("Unhandled " + message.type);
         }
