@@ -76,7 +76,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(true);
                 this.direction = "left";
                 //update entity velocity
-                this.vel.x -= this.accel.x * me.timer.tick;
+                this.vel.x -= this.accel.x *(me.timer.tick/500) ;
 
             }
             else if (me.input.isKeyPressed('right')){
@@ -84,7 +84,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.flipX(false);
                 this.direction = "right";
                 //update entity velocity
-                this.vel.x += this.accel.x *me.timer.tick;
+                this.vel.x += this.accel.x *(me.timer.tick/500);
             }
             else {
                 this.vel.x = 0;
