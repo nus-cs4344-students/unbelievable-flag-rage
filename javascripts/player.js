@@ -71,20 +71,23 @@ game.PlayerEntity = me.ObjectEntity.extend({
             this.updateCanShoot();
             this.refillAmmo();
 
-            if (me.input.isKeyPressed('left')){
+            if (me.input.isKeyPressed('left') ){
                 //flip sprite on horizontal axis
                 this.flipX(true);
                 this.direction = "left";
                 //update entity velocity
-                this.vel.x -= this.accel.x *(me.timer.tick/500) ;
+                this.vel.x -= this.accel.x *(me.timer.tick/50) ;
+
+
 
             }
-            else if (me.input.isKeyPressed('right')){
+            else if (me.input.isKeyPressed('right') ){
                 //unflip sprite
                 this.flipX(false);
                 this.direction = "right";
                 //update entity velocity
-                this.vel.x += this.accel.x *(me.timer.tick/500);
+                this.vel.x += this.accel.x *(me.timer.tick/50);
+
             }
             else {
                 this.vel.x = 0;
