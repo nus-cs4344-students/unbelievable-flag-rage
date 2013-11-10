@@ -276,7 +276,8 @@ game.PlayScreen = me.ScreenObject.extend({
 });
 
 var setPlayerPos = function (playerObj, playerMessageFromServer){
-    if(playerObj.pos.y - playerMessageFromServer.y > 20 || playerObj.pos.y - playerMessageFromServer.y < -20)
+
+    if(playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)
     {
         playerObj.pos.x = playerMessageFromServer.x;
         playerObj.pos.y = playerMessageFromServer.y;
