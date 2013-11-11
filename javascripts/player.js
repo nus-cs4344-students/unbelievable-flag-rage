@@ -27,7 +27,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.hasFlag = false;
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(10,22);
+        this.setVelocity(3,22);
         this.vel.x = 0;
         this.vel.y = 0;
 
