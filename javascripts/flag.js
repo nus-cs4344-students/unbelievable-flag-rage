@@ -19,7 +19,7 @@ game.FlagEntity = me.CollectableEntity.extend({
        this.playerOwner = null;
        this.visible = true;
        this.name = "flag"
-
+       this.collidable = true;
        this.type = me.game.COLLECTABLE_OBJECT;
 
     },
@@ -36,15 +36,13 @@ game.FlagEntity = me.CollectableEntity.extend({
         return {x: randomX, y :randomY};
     },
     getPickUp: function(player){
-            console.log("player " + global.state.localPlayer.id + " FLAG CARRIER");
             this.playerOwner = player;
             this.collidable = false;
     },
     ownerDie: function(){
         this.visible = true;
-        setTimeout(function() { this.collidable = true; }, 100);
-        this.playerOwner = null;
-
+        setTimeout(function() { this.collidable = true; console.log("flag.js: collidable = true")}, 100);
+        this.   playerOwner = null;
     },
 
     updatePosition: function(){
@@ -61,6 +59,7 @@ game.FlagEntity = me.CollectableEntity.extend({
         return true;
     },
     onCollision: function(res,obj){
+        console.log("flag.js: onCollision" + obj.id);
        // if (res.y > 0 && obj.falling)
         this.collidable = false;
         //this.visible = false;

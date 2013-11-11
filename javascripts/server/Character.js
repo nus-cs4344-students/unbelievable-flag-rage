@@ -26,6 +26,7 @@ function Character(xPos, yPos)
     this.vY = 0; // scaling factor is 3
     this.hitbox = new Hitbox(xPos,yPos);
     this.health = 100;
+    this.flag = null;
 
     /*****************************   SET METHODS   *****************************/
     this.setX = function(newX)

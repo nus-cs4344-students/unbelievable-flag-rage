@@ -172,7 +172,7 @@ game.PlayScreen = me.ScreenObject.extend({
                     break;
 
                     case "playerPickUpFlag":
-                        console.log("Player" + message.pid + "has the FLAG!");
+                        console.log("server: playerPickUpFlag : " + message.pid);
 
                         if (global.state.localPlayer.id == message.pid){
                             if (!global.state.localPlayer.hasFlag){
@@ -198,7 +198,7 @@ game.PlayScreen = me.ScreenObject.extend({
                     break;
 
                     case "playerDied":
-                        console.log("Player " + message.pid + " died!");
+                        console.log("server: playerDied " + message.pid);
 
                         // local player died
                         var localPlayer = global.state.localPlayer;
@@ -207,9 +207,8 @@ game.PlayScreen = me.ScreenObject.extend({
                             if (localPlayer.hasFlag){
                                 localPlayer.hasFlag = false;
                                 global.state.flag.ownerDie();
-                            }
-                            setTimeout(function(){localPlayer.visible= false;}, 3000);
 
+                            }
                         }
                         else { // remote players died
                             var playerDied = remotePlayerById(message.pid);
@@ -218,31 +217,38 @@ game.PlayScreen = me.ScreenObject.extend({
                                 playerDied.hasFlag = false;
                                 global.state.flag.ownerDie();
                             }
-                            setTimeout(function(){playerDied.visible = false;}, 3000);
 
                         }
                     break;
 
                     case "respawnPlayer":
+                        console.log("server: respawnPlayer " + message.pid);
                         if (global.state.localPlayer.id == message.pid){
-                            global.state.localPlayer.x = message.x;
-                            global.state.localPlayer.y = message.y;
-                            global.state.localPlayer.health = 100;
+                            global.state.localPlayer.pos.x = message.x;
+                            global.state.localPlayer.pos.y = message.y;
+                            setTimeout(function () {global.state.localPlayer.health = 100;}, 3000);
+                            if (!global.state.localPlayer.renderable.flickering){
+                                global.state.localPlayer.renderable.flicker(180);
+                            }
+
                             if (global.state.localPlayer.visible == false)
                                 global.state.localPlayer.visible = true;
                         }
                         else {
                             var respawningPlayer = remotePlayerById(message.pid);
-                            respawningPlayer.x = message.x;
-                            respawningPlayer.y = message.y;
-                            respawningPlayer.health = 100;
+                            respawningPlayer.pos.x = message.x;
+                            respawningPlayer.pos.y = message.y;
+                            setTimeout(function () {respawningPlayer.health = 100;}, 3000);
+                            if (!respawningPlayer.renderable.flickering){
+                                respawningPlayer.renderable.flicker(180);
+                            }
                             if (respawningPlayer.visible == false)
                                 respawningPlayer.visible = true;
                         }
                     break;
 
                     case "updateFlagPos" :
-                        //console.log("received updateFlagPos : " + message.x + ", " + message.y);
+                        console.log("server: updateFlagPos " + message.x + ", " + message.y);
                         global.state.flag.pos.x = message.x;
                         global.state.flag.pos.y = message.y;
                     break;
@@ -311,12 +317,6 @@ game.PlayScreen = me.ScreenObject.extend({
         if(!playerToMove) {
             return;
         }
-
-        // update the players position locally
-//        playerToMove.pos.x = data.x;
-//        playerToMove.pos.y = data.y;
-//        playerToMove.vel.x = data.vX;
-//        playerToMove.vel.y = data.vY;
     }
 });
 

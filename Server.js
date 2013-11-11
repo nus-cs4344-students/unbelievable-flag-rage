@@ -26,6 +26,7 @@ function Server()
     var p1Status,p2Status,p3Status,p4Status;    // Player 1,2,3 and 4 status (taken or empty)
     var bullets;
     var flag;
+    var flagMsgList = [];
     /*****************************   SENDING MESSAGE METHODS   *****************************/
     //private method: broadcast(msg)
     var broadcast = function (msg)
@@ -247,20 +248,22 @@ function Server()
         for (var connId in players){
             var player = players[connId];
 
-            if (player.character.flag){       // player has flag
-                player.character.beforeDie(); // remove player as flagCarrier
-                broadcast({
-                    type: "updateFlagPos",
-                    x: flag.x,
-                    y: flag.y
-                });
-            }
-
             if (player.character.health <= 0){
+
+                if (player.character.flag){       // player has flag
+                    player.character.beforeDie(); // remove player as flagCarrier
+                    broadcast({
+                        type: "updateFlagPos",
+                        x: flag.x,
+                        y: flag.y
+                    });
+                }
+
                 broadcast({
                     type: "playerDied",
                     pid: player.pid
                 });
+
                 // get spawn position for player who died
                 var position = playerPosAssigning(player.pid);
                 var x = xStartPos(position);
@@ -270,12 +273,13 @@ function Server()
                     {
                         type: "respawnPlayer",
                         x: x,
-                        y: y
+                        y: y,
+                        pid: player.pid
                     });
                 player.character.x = x;
                 player.character.y = y;
+                player.character.health = 100;
             }
-
         }
 
         // Send Flag Coordinates
@@ -359,11 +363,14 @@ function Server()
     }
 
     function playerPickUpFlag(conn, message){
+        var flagMsg = {conn: conn, message: message};
+//        flagMsgList.append(flagMsg);
+//        if flagMsg
         var player = players[conn.id];
         if (!player.character.flag && !flag.playerOwner){ //players has no flag && flag has no owner
             if( flag.x   <= player.character.x <= flag.x + 70 &&
                 flag.y   <= player.character.y <= flag.y + 70){
-                player.flag = flag;
+                player.character.flag = flag;
             }
             broadcast(
                 {
@@ -455,6 +462,7 @@ function Server()
                 break;
             case "pickUpFlag":
                 console.log("player " + players[conn.id].pid + " has picked up flag");
+
                 playerPickUpFlag(conn,message);
                 break;
             default:

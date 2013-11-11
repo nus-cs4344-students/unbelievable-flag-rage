@@ -9,7 +9,7 @@ var Game = {
     HEIGHT : 1050,				    // height of game window
     WIDTH : 1610,				    // width of game window
     PORT : 80,				    // port of game
-
+    //PORT : 4344,
     PLAYER_LEFT_START_POS_X: 70,    // player left x-coord
     PLAYER_LEFT_START_POS_X: 70,    // player left x-coord
     PLAYER_RIGHT_START_POS_X: 1540,  // player right x-coord

@@ -147,7 +147,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
         //check and update player movement
         this.updateMovement();
-
+        //this.checkCollision();
 
         // update animation if necessary
         if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
@@ -206,10 +206,12 @@ game.PlayerEntity = me.ObjectEntity.extend({
         if (res){
             switch (res.obj.type){
                 case me.game.COLLECTABLE_OBJECT: {
-
+//                    var isRemotePlayer = false;
+//                    if (global.state.remotePlayers.contains(id))
+//                        isRemotePlayer =true;
                     this.sendToServer({
                         type: "pickUpFlag",
-                        hasFlag: this.hasFlag,
+                        pid: this.pid,
                         x: this.pos.x,
                         y: this.pos.y
                     });
@@ -223,7 +225,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                         this.renderable.flicker(60);
                     }
                     //server updates need to be stored
-                    //add checking with server updates for dead recokoning.
+                    //add checking with server updates for dead reckoning.
                     break;
                 }
             }
@@ -231,9 +233,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
     }, // checkCollision: function()
     checkAlive: function(){
         var isAlive = true;
-        if (this.health <= 0 && !this.renderable.flickering){
+        if (this.health <= 0){
             isAlive = false;
-            this.renderable.flicker(180);
+
         }
         return isAlive;
     }
