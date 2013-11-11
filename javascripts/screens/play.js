@@ -83,15 +83,14 @@ game.PlayScreen = me.ScreenObject.extend({
                 var message = JSON.parse(e.data);
                 switch (message.type) {
                     case "message":
-
                     break;
 
                     case "update":
                         var updateArr = [];
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
-                        //updateArr.push(message.p3); // i = 2
-                        //updateArr.push(message.p4); // i = 3
+                        updateArr.push(message.p3); // i = 2
+                        updateArr.push(message.p4); // i = 3
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
@@ -314,16 +313,21 @@ game.PlayScreen = me.ScreenObject.extend({
         }
 
         // update the players position locally
-        playerToMove.pos.x = data.x;
-        playerToMove.pos.y = data.y;
-        playerToMove.vel.x = data.vX;
-        playerToMove.vel.y = data.vY;
+//        playerToMove.pos.x = data.x;
+//        playerToMove.pos.y = data.y;
+//        playerToMove.vel.x = data.vX;
+//        playerToMove.vel.y = data.vY;
     }
 });
 
 var setPlayerPos = function (playerObj, playerMessageFromServer){
-    playerObj.pos.x = playerMessageFromServer.x;
-    playerObj.pos.y = playerMessageFromServer.y
+
+    if(playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)
+    {
+        playerObj.pos.x = playerMessageFromServer.x;
+        playerObj.pos.y = playerMessageFromServer.y;
+    }
+
     playerObj.vel.x = playerMessageFromServer.vX;
     playerObj.vel.y = playerMessageFromServer.vY;
 }
