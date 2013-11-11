@@ -16,10 +16,11 @@ game.FlagEntity = me.CollectableEntity.extend({
 
         //call constructor
        this.parent(x,y, settings);
-       this.playerOwn = null;
-       this.name = "flag"
+       this.playerOwner = null;
        this.visible = true;
-        this.type = me.game.COLLECTABLE_OBJECT;
+       this.name = "flag"
+
+       this.type = me.game.COLLECTABLE_OBJECT;
 
     },
     randomFromInterval : function(from,to){
@@ -35,23 +36,21 @@ game.FlagEntity = me.CollectableEntity.extend({
         return {x: randomX, y :randomY};
     },
     getPickUp: function(player){
-        if (this.pickable){
-            console.log("player " + global.state.localPlayer.id + "FLAG CARRIER");
-            this.playerOwn = player;
-            this.visible = false;
-            this.pickable = false;
-
-        }
+            console.log("player " + global.state.localPlayer.id + " FLAG CARRIER");
+            this.playerOwner = player;
+            this.collidable = false;
     },
     ownerDie: function(){
-        this.collidable = true;
         this.visible = true;
+        setTimeout(function() { this.collidable = true; }, 100);
+        this.playerOwner = null;
+
     },
 
     updatePosition: function(){
-        if (this.playerOwn){ //has a valid player owner
-            this.pos.x = this.playerOwn.pos.x;
-            this.pos.y = this.playerOwn.pos.y;
+        if (this.playerOwner){ //has a valid player owner
+            this.pos.x = this.playerOwner.pos.x;
+            this.pos.y = this.playerOwner.pos.y;
         }
     },
     update: function(){
@@ -59,14 +58,15 @@ game.FlagEntity = me.CollectableEntity.extend({
             this.updatePosition();
             this.parent();
         }
+        return true;
     },
     onCollision: function(res,obj){
        // if (res.y > 0 && obj.falling)
         this.collidable = false;
-        this.visible = false;
+        //this.visible = false;
         console.log("flag collided");
         if (obj.name == global.state.localPlayer.id){
-            this.playerOwn = obj;
+            this.playerOwner = obj;
         }
     }
 });

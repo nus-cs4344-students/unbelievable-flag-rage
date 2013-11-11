@@ -61,6 +61,7 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.SPACE, "jump");
         me.input.bindKey(me.input.KEY.S, "start");
         me.input.bindKey(me.input.KEY.Q, "shoot");
+        me.input.bindKey(me.input.KEY.D, "drop");
 
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
@@ -79,12 +80,12 @@ game.PlayScreen = me.ScreenObject.extend({
         try{
             this.socket = new SockJS("http://" + global.network.host + ":" + global.network.port + "/game");
             this.socket.onmessage = function(e){
-
                 var message = JSON.parse(e.data);
                 switch (message.type) {
                     case "message":
 
-                        break;
+                    break;
+
                     case "update":
                         var updateArr = [];
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
@@ -117,7 +118,6 @@ game.PlayScreen = me.ScreenObject.extend({
                     break;
 
                     case "createLocalPlayer":
-
                         if (global.state.localPlayer == undefined){
                             var isLocal = true;
                             game.playScreen.onNewPlayer(message, isLocal);
@@ -133,6 +133,7 @@ game.PlayScreen = me.ScreenObject.extend({
                             console.log("Create remote player: " + remotePlayerID);
                         }
                     break;
+
                     case "playerShoot":
                         console.log("received playerShoot");
                         var direction = "";
@@ -145,27 +146,24 @@ game.PlayScreen = me.ScreenObject.extend({
                         me.game.add(opponentBullet, 2);
                         me.game.sort();
 
-                        break;
+                    break;
+
                     case "gotHit":
                         if (global.state.localPlayer.id == message.pid){
                             if (global.state.localPlayer.health > 0){
-                                //global.state.localPlayer.health -= 20;
                                 var newHealth = message.health;
                                 console.log("server: " + global.state.localPlayer.id + "got hit. health: " + newHealth);
-                            }
-                            else {
-                                global.state.localPlayer.renderable.flicker(90);
-                                me.game.remove(global.state.localPlayer);
                             }
                         }
                         else {
                             var opponentHit = remotePlayerById(message.pid);
-                            if (!opponentHit.flickering){
-                                opponentHit.renderable.flicker(3);
+                            if (opponentHit.health > 0){
+                                var newHealth = message.health;
+                                console.log("server: " + opponentHit.id + "got hit. health: " + newHealth);
                             }
-
                         }
                     break;
+
                     case "spawnFlag":
                         console.log("Client Spawn Flag at " + message.flagX + ", " + message.flagY);
                         var flag = new game.FlagEntity(message.flagX, message.flagY);
@@ -176,22 +174,20 @@ game.PlayScreen = me.ScreenObject.extend({
 
                     case "playerPickUpFlag":
                         console.log("Player" + message.pid + "has the FLAG!");
-                        global.state.flag.visible = false;
-                        global.state.flag.collidable = false;
+
                         if (global.state.localPlayer.id == message.pid){
                             if (!global.state.localPlayer.hasFlag){
                                 global.state.localPlayer.hasFlag = true;
-                                global.state.flag.playerOwner = global.state.localPlayer;
+                                global.state.flag.getPickUp(global.state.localPlayer);
                             }
                         }
                         else {
                             var flagCarrier = remotePlayerById(message.pid);
-                            flagCarrier.hasFlag = true;
-                            global.state.flag.playerOwner = flagCarrier;
+                            if (!flagCarrier.hasFlag){
+                                flagCarrier.hasFlag = true;
+                                global.state.flag.getPickUp(flagCarrier);
+                            }
                         }
-                        global.state.flag = flag;
-                        me.game.add(flag, 3);
-                        me.game.sort();
                         break;
 
                     case "startGame":
@@ -200,6 +196,56 @@ game.PlayScreen = me.ScreenObject.extend({
                         global.state.flag = flag;
                         me.game.add(flag, 3);
                         me.game.sort();
+                    break;
+
+                    case "playerDied":
+                        console.log("Player " + message.pid + " died!");
+
+                        // local player died
+                        var localPlayer = global.state.localPlayer;
+                        if (localPlayer.id == message.pid){
+
+                            if (localPlayer.hasFlag){
+                                localPlayer.hasFlag = false;
+                                global.state.flag.ownerDie();
+                            }
+                            setTimeout(function(){localPlayer.visible= false;}, 3000);
+
+                        }
+                        else { // remote players died
+                            var playerDied = remotePlayerById(message.pid);
+
+                            if (playerDied.hasFlag){
+                                playerDied.hasFlag = false;
+                                global.state.flag.ownerDie();
+                            }
+                            setTimeout(function(){playerDied.visible = false;}, 3000);
+
+                        }
+                    break;
+
+                    case "respawnPlayer":
+                        if (global.state.localPlayer.id == message.pid){
+                            global.state.localPlayer.x = message.x;
+                            global.state.localPlayer.y = message.y;
+                            global.state.localPlayer.health = 100;
+                            if (global.state.localPlayer.visible == false)
+                                global.state.localPlayer.visible = true;
+                        }
+                        else {
+                            var respawningPlayer = remotePlayerById(message.pid);
+                            respawningPlayer.x = message.x;
+                            respawningPlayer.y = message.y;
+                            respawningPlayer.health = 100;
+                            if (respawningPlayer.visible == false)
+                                respawningPlayer.visible = true;
+                        }
+                    break;
+
+                    case "updateFlagPos" :
+                        //console.log("received updateFlagPos : " + message.x + ", " + message.y);
+                        global.state.flag.pos.x = message.x;
+                        global.state.flag.pos.y = message.y;
                     break;
                 }
             }
@@ -292,3 +338,5 @@ var remotePlayerById = function(id) {
 
     return false;
 };
+
+

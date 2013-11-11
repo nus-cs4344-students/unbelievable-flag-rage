@@ -222,7 +222,8 @@ function Server()
     function gameLoop()
     {
         //temporary game state updates in game loop
-        // Broadcasts Player that got hit
+
+        // Check player got hit and broadcasts Player that got hit
         for (var i = 0; i < bullets.length; i++){
             var bullet = bullets[i];
             var playerHit = bullet.moveOneStep(players); //player object that got hit
@@ -240,6 +241,52 @@ function Server()
             if (bullet.getInvalid()){
                 bullets.splice(i,1);
             }
+        }
+
+        // Check player deaths and broadcasts Player died
+        for (var connId in players){
+            var player = players[connId];
+
+            if (player.character.flag){       // player has flag
+                player.character.beforeDie(); // remove player as flagCarrier
+                broadcast({
+                    type: "updateFlagPos",
+                    x: flag.x,
+                    y: flag.y
+                });
+            }
+
+            if (player.character.health <= 0){
+                broadcast({
+                    type: "playerDied",
+                    pid: player.pid
+                });
+                // get spawn position for player who died
+                var position = playerPosAssigning(player.pid);
+                var x = xStartPos(position);
+                var y = yStartPos(position);
+                // tell player to respawn
+                unicast(sockets[player.pid],
+                    {
+                        type: "respawnPlayer",
+                        x: x,
+                        y: y
+                    });
+                player.character.x = x;
+                player.character.y = y;
+            }
+
+        }
+
+        // Send Flag Coordinates
+        if (flag.playerOwner){
+            selectiveBroadcast(flag.playerOwner.pid,
+                {
+                    type: "updateFlagPos",
+                    x: flag.x,
+                    y: flag.y
+                }
+            );
         }
         if (gameInterval !== undefined)
         {
@@ -294,7 +341,7 @@ function Server()
     {
         //console.log("player" + conn.id);
         var playerCharacter = players[conn.id].character;
-        console.log("received update from player " + players[conn.id].pid);
+        //console.log("received update from player " + players[conn.id].pid);
         playerCharacter.updatePosition(message.x, message.y, message.vX, message.vY);
         /*
         players[conn.id].character.setX(message.x);
@@ -309,27 +356,22 @@ function Server()
         var bullet = new Bullet (message.bulletX, message.bulletY, message.bulletVX);
         bullets.push(bullet);
         selectiveBroadcast(players[conn.id].pid, message);
-        // var playerId = players[conn.id].pid;
-        // bullets[playerId].push(bullet);
     }
 
     function playerPickUpFlag(conn, message){
         var player = players[conn.id];
-        if (!player.character.hasFlag && !flag.playerOwner){
+        if (!player.character.flag && !flag.playerOwner){ //players has no flag && flag has no owner
             if( flag.x   <= player.character.x <= flag.x + 70 &&
-                flag.y   <= player.character.y <= flag.y + 70)
-            //if (flag.x == player.character.x &&
-            //    flag.y == player.character.y)
-                player.hasFlag = true;
+                flag.y   <= player.character.y <= flag.y + 70){
+                player.flag = flag;
+            }
             broadcast(
                 {
                     type: "playerPickUpFlag",
-                    pid: players[conn.id].pid
+                    pid: player.pid
                 }
             )
         }
-
-
     }
 
     function checkBulletHit(){
@@ -412,7 +454,7 @@ function Server()
                 playerShoot(conn,message);
                 break;
             case "pickUpFlag":
-                console.log("player" + players[conn.id].pid + "has picked up flag");
+                console.log("player " + players[conn.id].pid + " has picked up flag");
                 playerPickUpFlag(conn,message);
                 break;
             default:

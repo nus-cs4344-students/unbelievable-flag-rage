@@ -16,6 +16,9 @@ function Flag()
     this.x = randomSpawnPoint.x;
     this.y = randomSpawnPoint.y;
     this.playerOwner = null;
+
+
+    // Private Methods
     function randomFromInterval(from,to){
         return Math.floor(Math.random()*(to-from+1)+from);
     }
@@ -29,6 +32,16 @@ function Flag()
         var randomX = randomFromInterval(xRange1,xRange2);
         var randomY = randomFromInterval(yRange1,yRange2);
         return {x: randomX, y :randomY};
+    }
+
+    // Public Methods
+    this.ownerDie = function (){
+        this.playerOwner = null;
+    }
+
+    this.updatePosition = function(){
+        this.x = this.playerOwner.character.x;
+        this.y = this.playerOwner.character.y;
     }
 }
 

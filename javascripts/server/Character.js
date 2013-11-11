@@ -14,7 +14,7 @@ function Character(xPos, yPos)
     this.vX;    // x-velocity of the Character
     this.vY;    // y-velocity of the Character
     this.hitbox;
-    this.hasFlag;
+    this.flag;
     this.health;
 
 
@@ -83,6 +83,14 @@ function Character(xPos, yPos)
         this.setVX(vX);
         this.setVY(vY);
         this.hitbox.update(xPos, yPos);
+    }
+    this.beforeDie = function(){
+        if (this.flag){
+            this.flag.x = this.x;
+            this.flag.y = this.y;
+            this.flag.ownerDie();
+        }
+        this.health = 100;
     }
 }
 global.Character = Character;

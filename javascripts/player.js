@@ -54,9 +54,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
         // define a basic walking animatin
         this.renderable.addAnimation ("walk",  [0, 1, 2, 3,4,5,6,7,8,9,10],3);
-                                                //" p1_walk04.png"]);/*, "p1_walk05.png", "p1_walk06.png",
-                                                //"p1_walk07.png", "p1_walk08.png", "p1_walk09.png"]);
-                                                //"p1_walk10.png", "p1_walk11.png"]);*/
+        //" p1_walk04.png"]);/*, "p1_walk05.png", "p1_walk06.png",
+        //"p1_walk07.png", "p1_walk08.png", "p1_walk09.png"]);
+        //"p1_walk10.png", "p1_walk11.png"]);*/
         this.renderable.addAnimation("shoot", [1],2);
 
         // set as default
@@ -70,28 +70,28 @@ game.PlayerEntity = me.ObjectEntity.extend({
     update: function(){
 
         if (this.name === global.state.playername){
+            if (this.checkAlive()){
+                this.updateCanShoot();
+                this.refillAmmo();
 
-            this.updateCanShoot();
-            this.refillAmmo();
+                if (me.input.isKeyPressed('left')){
+                    //flip sprite on horizontal axis
+                    this.flipX(true);
+                    this.direction = "left";
+                    //update entity velocity
+                    this.vel.x -= this.accel.x *(me.timer.tick);
 
-            if (me.input.isKeyPressed('left')){
-                //flip sprite on horizontal axis
-                this.flipX(true);
-                this.direction = "left";
-                //update entity velocity
-                this.vel.x -= this.accel.x *(me.timer.tick/500) ;
-
-            }
-            else if (me.input.isKeyPressed('right')){
-                //unflip sprite
-                this.flipX(false);
-                this.direction = "right";
-                //update entity velocity
-                this.vel.x += this.accel.x *(me.timer.tick/500);
-            }
-            else {
-                this.vel.x = 0;
-            }
+                }
+                else if (me.input.isKeyPressed('right')){
+                    //unflip sprite
+                    this.flipX(false);
+                    this.direction = "right";
+                    //update entity velocity
+                    this.vel.x += this.accel.x *(me.timer.tick);
+                }
+                else {
+                    this.vel.x = 0;
+                }
                 if (me.input.isKeyPressed('jump')){
                     //make sure we are not already jumping/falling
                     if (!this.jumping && !this.falling){
@@ -133,44 +133,49 @@ game.PlayerEntity = me.ObjectEntity.extend({
                         //me.audio.play("shoot");
                     }
                 } // if (keyPressed('shoot'))
-            } // if(this.name == globalPlayerName)
 
-           // check if player near flag
-           // if (global.state.flag){
-           //     if (global.state.flag.pos.x - 10 <= this.pos.x <= global.state.flag.pos.x + 70 &&
-           //         global.state.flag.pos.y - 10  <= this.pos.y <= global.state.flag.pos.x + 70) {
-           //         this.pickUp("flag");
-           //     }
-           // }
-            //check and update player movement
-            this.updateMovement();
-            this.checkCollision();
-
-            // update animation if necessary
-            if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
-
-                if (this.vel.x !== 0) {
-                    this.flipX(this.vel.x < 0);
+                if (me.input.isKeyPressed('drop')){
+                    if (this.hasFlag){
+                        this.hasFlag = false;
+                        global.state.flag.visible = true;
+                        setTimeout(function() {global.state.flag.collidable = true;}, 100);
+                    }
                 }
+                this.checkCollision();
+            } //if(this.checkAlive())
+        } // if(this.name == globalPlayerName)
 
-                // update object animation
-                this.parent();
-            }
-            // send local player state to server
-            if (this.name == global.state.playername && game.playScreen.gameStart){
-                //if (this.step == 0){
-                    this.sendToServer({
-                        type: "update",
-                        x: global.state.localPlayer.pos.x,
-                        y: global.state.localPlayer.pos.y,
-                        vX: global.state.localPlayer.vel.x,
-                        vY: global.state.localPlayer.vel.y
-                    });
+        //check and update player movement
+        this.updateMovement();
 
-                if (this.step++ > 3)
-                    this.step = 0;
+
+        // update animation if necessary
+        if (this.vel.x!=0 || this.vel.y!=0 ){//|| (this.renderable && this.renderable.isFlickering())) {
+
+            if (this.vel.x !== 0) {
+                this.flipX(this.vel.x < 0);
             }
-         // else inform the engine we did not perform
+
+            // update object animation
+            this.parent();
+        }
+        // send local player state to server
+        if (this.name == global.state.playername && game.playScreen.gameStart){
+            //if (this.step == 0){
+            this.sendToServer({
+                type: "update",
+                x: global.state.localPlayer.pos.x,
+                y: global.state.localPlayer.pos.y,
+                vX: global.state.localPlayer.vel.x,
+                vY: global.state.localPlayer.vel.y
+            });
+
+            if (this.step++ > 3)
+                this.step = 0;
+        }
+
+
+        // else inform the engine we did not perform
         // any update (e.g. position, animation)
         return true;
     },
@@ -201,7 +206,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         if (res){
             switch (res.obj.type){
                 case me.game.COLLECTABLE_OBJECT: {
-                    this.hasFlag = true;
+
                     this.sendToServer({
                         type: "pickUpFlag",
                         hasFlag: this.hasFlag,
@@ -215,7 +220,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     console.log("player detect got hit!");
                     this.health -= 20;
                     if (!this.flickering){
-                        this.renderable.flicker(3);
+                        this.renderable.flicker(60);
                     }
                     //server updates need to be stored
                     //add checking with server updates for dead recokoning.
@@ -223,7 +228,17 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 }
             }
         }
+    }, // checkCollision: function()
+    checkAlive: function(){
+        var isAlive = true;
+        if (this.health <= 0 && !this.renderable.flickering){
+            isAlive = false;
+            this.renderable.flicker(180);
+        }
+        return isAlive;
     }
+
+
 });
 
 game.PlayerEntity.SHOOT_DELAY = 50;
