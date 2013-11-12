@@ -204,8 +204,9 @@ game.PlayerEntity = me.ObjectEntity.extend({
     checkCollision: function(){
         var res = me.game.collide(this);
         if (res){
-            switch (res.obj.type){
-                case me.game.COLLECTABLE_OBJECT: {
+            switch (res.obj.name){
+                //case me.game.COLLECTABLE_OBJECT: {
+                case "flag":{
 //                    var isRemotePlayer = false;
 //                    if (global.state.remotePlayers.contains(id))
 //                        isRemotePlayer =true;
@@ -213,12 +214,13 @@ game.PlayerEntity = me.ObjectEntity.extend({
                         type: "pickUpFlag",
                         pid: this.pid,
                         x: this.pos.x,
-                        y: this.pos.y
+                        y: this.pos.y,
+                        timestamp: new Date().getTime()
                     });
-                    console.log("player " + this.id + "send pickUpFlag msg");
+                    console.log("player.js checkCollision(): player " + this.id + " send pickUpFlag msg");
                     break;
                 }
-                case me.game.ENEMY_OBJECT: {
+                case "bullet":{
                     console.log("player detect got hit!");
                     this.health -= 20;
                     if (!this.flickering){

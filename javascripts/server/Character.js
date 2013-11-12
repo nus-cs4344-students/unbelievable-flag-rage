@@ -92,6 +92,7 @@ function Character(xPos, yPos)
             this.flag.ownerDie();
         }
         this.health = 100;
+        this.flag = null;
     }
 }
 global.Character = Character;
