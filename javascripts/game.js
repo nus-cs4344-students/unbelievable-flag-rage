@@ -17,7 +17,8 @@ var global = {
         playername: "",
         localPlayer: undefined,
         remotePlayers: [],
-        flag: undefined
+        flag: undefined,
+        returnPoint: undefined
     },
    aliveBulletCount: 0
 };
