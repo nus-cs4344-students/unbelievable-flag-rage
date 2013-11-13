@@ -54,7 +54,7 @@ game.lobbyScreen = me.ScreenObject.extend({
 
     onNewPlayer: function(data) {
         // When a new player connects, we create their object and add them to the screen.
-        var newPlayer = new game.player(data.x, data.y, {
+        var newPlayer = new game.PlayerEntity(data.x, data.y, {
             spritewidth: 50,
             spriteheight: 30,
             name: "o"
