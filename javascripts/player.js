@@ -207,16 +207,16 @@ game.PlayerEntity = me.ObjectEntity.extend({
             switch (res.obj.name){
                 //case me.game.COLLECTABLE_OBJECT: {
                 case "flag":{
-//                    var isRemotePlayer = false;
-//                    if (global.state.remotePlayers.contains(id))
-//                        isRemotePlayer =true;
-                    this.sendToServer({
-                        type: "pickUpFlag",
-                        pid: this.pid,
-                        x: this.pos.x,
-                        y: this.pos.y,
-                        timestamp: new Date().getTime()
-                    });
+
+                    if (this.hasFlag == false){
+                        this.sendToServer({
+                            type: "pickUpFlag",
+                            pid: this.pid,
+                            x: this.pos.x,
+                            y: this.pos.y,
+                            timestamp: new Date().getTime()
+                        });
+                    }
                     console.log("player.js checkCollision(): player " + this.id + " send pickUpFlag msg");
                     break;
                 }
@@ -229,6 +229,16 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     //server updates need to be stored
                     //add checking with server updates for dead reckoning.
                     break;
+                }
+                // send position of returning flag for server to check
+                case "returnPoint":{
+                    console.log("player.js checkCollision(): player " + this.id + " returned flag!");
+                    this.sendToServer({
+                        type: "returnFlag",
+                        x: this.pos.x,
+                        y: this.pos.y,
+                        timestamp: new Date().getTime()
+                    })
                 }
             }
         }

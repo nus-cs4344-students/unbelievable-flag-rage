@@ -14,6 +14,7 @@ require(LIB_PATH + "Game.js");
 require(LIB_PATH + "Hitbox.js");
 require(LIB_PATH + "Bullet.js");
 require(LIB_PATH + "Flag.js");
+require(LIB_PATH + "ReturnPoint.js");
 function Server()
 {
     // Private Variables
@@ -26,7 +27,7 @@ function Server()
     var p1Status,p2Status,p3Status,p4Status;    // Player 1,2,3 and 4 status (taken or empty)
     var bullets;
     var flag;
-    var flagMsgList = [];
+    var returnPoint;
     /*****************************   SENDING MESSAGE METHODS   *****************************/
     //private method: broadcast(msg)
     var broadcast = function (msg)
@@ -223,7 +224,6 @@ function Server()
     function gameLoop()
     {
         //temporary game state updates in game loop
-
         // Check player got hit and broadcasts Player that got hit
         for (var i = 0; i < bullets.length; i++){
             var bullet = bullets[i];
@@ -283,15 +283,35 @@ function Server()
         }
 
         // Send Flag Coordinates
-        if (flag.playerOwner){
-            selectiveBroadcast(flag.playerOwner.pid,
+        var flagOwner = flag.playerOwner;
+        if (flagOwner){
+            selectiveBroadcast(flagOwner.pid,
                 {
                     type: "updateFlagPos",
                     x: flag.x,
                     y: flag.y
                 }
             );
+            /*
+            // Check player return flag
+            var flagReturned = returnPoint.checkGotReturn(flagOwner.character.x, flagOwner.character.y);
+            if (flagReturned){
+                flagOwner.character.returnFlag();
+                flag.spawn();
+                returnPoint.spawn();
+                broadcast({
+                    type:"spawnFlagAndReturn",
+                    flagX: flag.x,
+                    flagY: flag.y,
+                    rpX: returnPoint.x,
+                    rpY: returnPoint.y,
+                    pid: flagOwner.pid
+                });
+            }
+            */
         }
+
+
         if (gameInterval !== undefined)
         {
             broadcast ({
@@ -310,7 +330,7 @@ function Server()
                     y:p2.character.getY(),
                     vX:p2.character.getVX(),
                     vY:p2.character.getVY()
-                },
+                }/*,
 
                 //player 3 state
 
@@ -328,7 +348,7 @@ function Server()
                     vX:p4.character.getVX(),
                     vY:p4.character.getVY()
                 }
-
+                  */
             });
         }
 
@@ -363,27 +383,40 @@ function Server()
     }
 
     function playerPickUpFlag(conn, message){
-        var flagMsg = {conn: conn, message: message};
-//        flagMsgList.append(flagMsg);
-//        if flagMsg
         var player = players[conn.id];
         if (!player.character.flag && !flag.playerOwner){ //players has no flag && flag has no owner
             if( flag.x   <= player.character.x <= flag.x + 70 &&
                 flag.y   <= player.character.y <= flag.y + 70){
                 player.character.flag = flag;
+                flag.playerOwner = player;
+                broadcast(
+                    {
+                        type: "playerPickUpFlag",
+                        pid: player.pid
+                    });
             }
-            broadcast(
-                {
-                    type: "playerPickUpFlag",
-                    pid: player.pid
-                }
-            )
         }
     }
 
-    function checkBulletHit(){
-        for (var bullet in bullets){
-
+    function playerReturnFlag(conn, message){
+        var player = players[conn.id];
+        //check if player has the flag, and the flag has the right player
+        if (player.character.flag && flag.playerOwner.pid == player.pid){
+            //check if the player's position is in range of the hitbox of the return point
+            if (returnPoint.checkGotReturn(message.x, message.y)){
+                player.character.flag = null;
+                flag.ownerDie(); //just setting flag.playerOwner = null;
+                flag.spawn();
+                returnPoint.spawn(flag);
+                broadcast({
+                    type:"spawnFlagAndReturn",
+                    flagX: flag.x,
+                    flagY: flag.y,
+                    rpX: returnPoint.x,
+                    rpY: returnPoint.y,
+                    pid: player.pid
+                });
+            }
         }
     }
 	
@@ -406,11 +439,14 @@ function Server()
     {
         // send flag spawn point to clients
         flag = new Flag();
+        returnPoint = new ReturnPoint();
     	// Everything is a OK
     	broadcast({
             type:"startGame",
             flagX: flag.x,
-            flagY: flag.y
+            flagY: flag.y,
+            rpX: returnPoint.x,
+            rpY: returnPoint.y
         });
         // TODO: might need separate gameState and sendUpdate loops
         gameInterval = setInterval(function() {gameLoop();}, 1000/Game.FRAME_RATE);
@@ -422,12 +458,12 @@ function Server()
         {
         	playing();
         }
-
+        /*
         else if (Object.keys(players).length < 4)
         {
         	notEnoughPlayer();
         }
-
+         */
         else 
         {
         	startGame();
@@ -462,9 +498,12 @@ function Server()
                 break;
             case "pickUpFlag":
                 console.log("player " + players[conn.id].pid + " has picked up flag");
-
                 playerPickUpFlag(conn,message);
                 break;
+            case "returnFlag":
+                console.log("player " + players[conn.id].pid + " has returned the flag");
+                playerReturnFlag(conn,message);
+                break
             default:
                 console.log("Unhandled " + message.type);
         }

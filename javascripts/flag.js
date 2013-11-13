@@ -12,6 +12,7 @@ game.FlagEntity = me.ObjectEntity.extend({
         var settings = {};
         settings.image = "flag";
         settings.spritewidth = 70;
+        settings.spriteheigth = 70;
 
 
         //call constructor
@@ -42,6 +43,9 @@ game.FlagEntity = me.ObjectEntity.extend({
             this.collidable = false;
             this.visible = true;
             this.alwaysUpdate = true;
+    },
+    getReturned: function(){
+
     },
     ownerDie: function(){
         this.visible = true;

@@ -23,6 +23,12 @@ game.resources = [
         type: "image",
         src: "data/items/flag.png"
     },
+    // returnPoint
+    {
+        name: "returnPoint",
+        type: "image",
+        src: "data/items/returnPoint.png"
+    },
     //p1 walk spritesheet
     {
         name: "p1_walk",

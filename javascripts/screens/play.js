@@ -89,8 +89,8 @@ game.PlayScreen = me.ScreenObject.extend({
                         var updateArr = [];
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
-                        updateArr.push(message.p3); // i = 2
-                        updateArr.push(message.p4); // i = 3
+                        //updateArr.push(message.p3); // i = 2
+                        //updateArr.push(message.p4); // i = 3
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
@@ -163,12 +163,27 @@ game.PlayScreen = me.ScreenObject.extend({
                         }
                     break;
 
-                    case "spawnFlag":
-                        console.log("Client Spawn Flag at " + message.flagX + ", " + message.flagY);
-                        var flag = new game.FlagEntity(message.flagX, message.flagY);
-                        global.state.flag = flag;
-                        me.game.add(flag, 3);
-                        me.game.sort();
+                    case "spawnFlagAndReturn":
+                        console.log("Client Returned Flag!");
+                        console.log("New ReturnPoint: " + message.rpX + "," + message.rpY);
+
+                        if (global.state.localPlayer.id == message.pid){
+                            if (global.state.localPlayer.hasFlag){
+                                global.state.localPlayer.hasFlag = false;
+                            }
+                        }
+                        else {
+                            var flagCarrier = remotePlayerById(message.pid);
+                            if (flagCarrier.hasFlag){
+                                flagCarrier.hasFlag = false;
+                            }
+                        }
+                        global.state.flag.ownerDie();
+                        global.state.flag.pos.x = message.flagX;
+                        global.state.flag.pos.y = message.flagY;
+
+                        global.state.returnPoint.pos.x = message.rpX;
+                        global.state.returnPoint.pos.Y = message.rpY;
                     break;
 
                     case "playerPickUpFlag":
@@ -193,7 +208,11 @@ game.PlayScreen = me.ScreenObject.extend({
                         console.log("Client Start Flag at " + message.flagX + ", " + message.flagY);
                         var flag = new game.FlagEntity(message.flagX, message.flagY);
                         global.state.flag = flag;
-                        me.game.add(flag, 3);
+                        var returnPoint = new game.ReturnPointEntity(message.rpX,message.rpY);
+                        global.state.returnPoint = returnPoint;
+                        me.game.add(flag, 2);
+                        me.game.sort();
+                        me.game.add(returnPoint, 2);
                         me.game.sort();
                     break;
 
@@ -219,6 +238,7 @@ game.PlayScreen = me.ScreenObject.extend({
                             }
 
                         }
+                        console.log("server: playerDied flag.collidable = " + global.state.flag.collidable);
                     break;
 
                     case "respawnPlayer":
@@ -248,7 +268,7 @@ game.PlayScreen = me.ScreenObject.extend({
                     break;
 
                     case "updateFlagPos" :
-                        console.log("server: updateFlagPos " + message.x + ", " + message.y);
+                        //console.log("server: updateFlagPos " + message.x + ", " + message.y);
                         global.state.flag.pos.x = message.x;
                         global.state.flag.pos.y = message.y;
                     break;
