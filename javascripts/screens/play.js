@@ -12,7 +12,8 @@ game.PlayScreen = me.ScreenObject.extend({
     onResetEvent: function(){
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
-
+    // add our HUD to the game world
+       //me.game.add(new game.HUD.Container());
     },
     onNewPlayer: function(data, isLocal) {
         var newPlayerName = "";
@@ -32,19 +33,20 @@ game.PlayScreen = me.ScreenObject.extend({
         });
         newPlayer.id = data.playerID;
         newPlayer.name = data.playerID;
+        //autoSort = false;
 
         if (isLocal){
             global.state.localPlayer = newPlayer;
             global.state.playername = newPlayer.id;
             console.log ("playername: " + global.state.playername);
             console.log ("localPlayer id:" + global.state.localPlayer.id + " name:" + global.state.localPlayer.name);
-            me.game.add(global.state.localPlayer, 2);
+            me.game.add(newPlayer, 3);
             me.game.sort();
         }
         else {
             global.state.remotePlayers.push(newPlayer);
             console.log("remotePlayer id: " + newPlayer.id + " name: " + newPlayer.name);
-            me.game.add(newPlayer, 2);
+            me.game.add(newPlayer, 3);
             me.game.sort();
         }
 
@@ -62,6 +64,7 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.S, "start");
         me.input.bindKey(me.input.KEY.Q, "shoot");
         me.input.bindKey(me.input.KEY.D, "drop");
+        me.input.bindKey(me.input.KEY.Y, "delay");
 
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
@@ -89,8 +92,8 @@ game.PlayScreen = me.ScreenObject.extend({
                         var updateArr = [];
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
-                        //updateArr.push(message.p3); // i = 2
-                        //updateArr.push(message.p4); // i = 3
+                        updateArr.push(message.p3); // i = 2
+                        updateArr.push(message.p4); // i = 3
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
@@ -285,6 +288,9 @@ game.PlayScreen = me.ScreenObject.extend({
     },
 
     onDestroyEvent: function () {
+
+        // remove the HUD from the game world
+        me.game.world.removeChild(me.game.world.getEntityByProp("name", "HUD")[0]);
         // Unbind keys
         me.input.unbindKey(me.input.KEY.LEFT);
         me.input.unbindKey(me.input.KEY.RIGHT);
@@ -342,14 +348,22 @@ game.PlayScreen = me.ScreenObject.extend({
 
 var setPlayerPos = function (playerObj, playerMessageFromServer){
 
-    if(playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)
+    if((playerObj.pos.y - playerMessageFromServer.y > 10 || playerObj.pos.y - playerMessageFromServer.y < -10)&&playerMessageFromServer.jump == false)
     {
         playerObj.pos.x = playerMessageFromServer.x;
         playerObj.pos.y = playerMessageFromServer.y;
     }
+    if(playerMessageFromServer.jump = true)
+    {
+        playerObj.vel.y = -playerObj.maxVel.y * me.timer.tick;
+    }
+    if(playerMessageFromServer.air = true)
 
-    playerObj.vel.x = playerMessageFromServer.vX;
-    playerObj.vel.y = playerMessageFromServer.vY;
+    {playerObj.vel.x = playerMessageFromServer.vX;
+    playerObj.vel.y = playerMessageFromServer.vY;}
+
+
+
 }
 // Helper function to return one of our remote players
 var remotePlayerById = function(id) {

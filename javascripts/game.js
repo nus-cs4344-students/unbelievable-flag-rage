@@ -4,10 +4,10 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
-        host: "unbelievable-flag-rage.herokuapp.com",
-        //host: "localhost",
-        //port: "4344",
-        port: 80,
+        //host: "unbelievable-flag-rage.herokuapp.com",
+        host: "localhost",
+        port: "4344",
+        //port: 80,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
@@ -39,6 +39,8 @@ var game =
         me.sys.pauseOnBlur = false;
         me.sys.stopOnBlur = false;
         me.sys.alwaysUpdate = true;
+        //me.sys.gravity = ;
+
         //game world is 1680 x 1580 px
         if (!me.video.init("jsapp", 1080, 800, true, 'auto')) {
             alert("html 5 canvas is not supported by this browser.");

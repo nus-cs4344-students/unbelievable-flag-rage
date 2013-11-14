@@ -25,11 +25,13 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.ammo = 3;
         this.direction = "right";
         this.hasFlag = false;
+        //this.autoSort = false;
 
         //set default horizontal & vertical speed (accel vector)
         this.setVelocity(10,22);
         this.vel.x = 0;
         this.vel.y = 0;
+        this.jump = false;
 
         // adjust bonding box for collision
         //this.updateColRect(-1, 0, 10, 11);
@@ -93,6 +95,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     this.vel.x = 0;
                 }
                 if (me.input.isKeyPressed('jump')){
+                    this.jump = true;
                     //make sure we are not already jumping/falling
                     if (!this.jumping && !this.falling){
                         // set current vel to the maximum defined value
@@ -162,14 +165,19 @@ game.PlayerEntity = me.ObjectEntity.extend({
         // send local player state to server
         if (this.name == global.state.playername && game.playScreen.gameStart){
             //if (this.step == 0){
+
             this.sendToServer({
                 type: "update",
                 x: global.state.localPlayer.pos.x,
                 y: global.state.localPlayer.pos.y,
                 vX: global.state.localPlayer.vel.x,
-                vY: global.state.localPlayer.vel.y
-            });
+                vY: global.state.localPlayer.vel.y,
+                jump:global.state.localPlayer.jump,
+                air:global.state.localPlayer.jumping || global.state.localPlayer.falling
 
+            });
+            if(global.state.localPlayer.jump == true )
+                global.state.localPlayer.jump = false;
             if (this.step++ > 3)
                 this.step = 0;
         }
