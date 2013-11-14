@@ -13,6 +13,14 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
 
+        // register on the mousemove event using the viewport
+        me.input.registerPointerEvent("mousemove", me.game.viewport, function(event) {
+            // publish a "mousemove" message
+            me.event.publish("mousemove", [event]);
+            // don't propagate this event furthermore
+            return false;
+        });
+
     },
     onNewPlayer: function(data, isLocal) {
         var newPlayerName = "";
@@ -62,9 +70,12 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.S, "start");
         me.input.bindKey(me.input.KEY.Q, "shoot");
         me.input.bindKey(me.input.KEY.D, "drop");
+        me.input.bindMouse(me.input.mouse.LEFT, me.input.KEY.S);
 
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
+
+     ;
 
         /*
         // Create our player and set them to be the local player (so we know who "we" are)
