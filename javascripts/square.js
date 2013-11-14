@@ -6,6 +6,8 @@ game.square = me.Renderable.extend({
         // call the constructor
         this.parent(new me.Vector2d(x, y) , 100, 100);
 
+        this.canShoot = true;
+
         // selected flag
         this.selected = false;
 
@@ -19,6 +21,11 @@ game.square = me.Renderable.extend({
         // store the id of the corresponding
         // touch event (when selected)
         this.pointerId = null;
+
+        //set default horizontal & vertical speed (accel vector)
+        this.setVelocity(3,22);
+        this.vel.x = 0;
+        this.vel.y = 0;
 
         // register required events
         this.moveCallback = this.onMoveEvent.bind(this);
@@ -45,15 +52,26 @@ game.square = me.Renderable.extend({
      * callback for event click
      */
     onShootEvent : function(e) {
-        if (this.selected === false) {
-            this.pointerId = e.pointerId;
-            this.selected = true;
-            this.color = "red";
-            // e.gameX/e.gameY are the game canvas coordinates
-            this.grabOffset.set(e.gameX, e.gameY);
-            this.grabOffset.sub(this.pos);
-            // don't propagate this event furthemore
-            return false;
+        if (this.canShoot){
+            console.log("+++++++++++ player shot " + this.direction);
+            this.renderable.setCurrentAnimation("shoot");
+            this.renderable.setCurrentAnimation("walk");
+            this.canShoot = false;
+            var isOpponent = false;
+            var bullet = new game.BulletEntity(this.pos.x, this.pos.y, this.direction, false);
+            me.game.add(bullet,2);
+            me.game.sort();
+            global.aliveBulletCount++;
+
+            this.sendToServer({
+                type: "playerShoot",
+                bulletX: bullet.pos.x,
+                bulletY: bullet.pos.y,
+                bulletVX: bullet.vel.x
+            });
+            console.log("local player bullet: " + bullet.pos.x + bullet.pos.y) ;
+            console.log("    player location: " + this.pos.x + this.pos.y);
+            //me.audio.play("shoot");
         }
     },
 
@@ -61,13 +79,13 @@ game.square = me.Renderable.extend({
      * callback for event click
      */
     onJumpEvent : function(e) {
-        if (this.selected === true) {
-            this.pointerId = undefined;
-            this.selected = false;
-            this.color = "white";
-            // don't propagate this event furthemore
-            return false;
-        }
+//        if (!this.jumping && !this.falling){
+//            // set current vel to the maximum defined value
+//            // gravity will then do the rest
+//            this.vel.y = -this.maxVel.y * me.timer.tick;
+//            // set the jumping flag
+//            this.jumping = true;
+//        }
     },
 
     /**
