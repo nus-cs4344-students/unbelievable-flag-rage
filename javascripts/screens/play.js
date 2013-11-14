@@ -13,6 +13,8 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
 
+
+
         // register on the mousemove event using the viewport
         me.input.registerPointerEvent("mousemove", me.game.viewport, function(event) {
             // publish a "mousemove" message
@@ -71,7 +73,7 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.Q, "shoot");
         me.input.bindKey(me.input.KEY.D, "drop");
         me.input.bindMouse(me.input.mouse.LEFT, me.input.KEY.Q);
-        //me.sys.watchAccelerometer();
+        me.sys.watchAccelerometer();
         //me.sys.watchDeviceOrientation();
         //me.device.watchDeviceOrientation();
        // me.device.watchAccelerometer();
@@ -109,9 +111,12 @@ game.PlayScreen = me.ScreenObject.extend({
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
-//                            if (global.state.localPlayer.id == (i + 1)  ){
-//                                setPlayerPos(global.state.localPlayer, updateMsg);
-//                            }
+                            if (global.state.localPlayer.id == (i + 1)  ){
+                                global.time.serverTime = updateArr[i].time;
+                                global.time.clientTime = global.time.serverTime - global.time.timeOffSet/1000;
+
+                                //setPlayerPos(global.state.localPlayer, updateMsg);
+                            }
                             if(global.state.localPlayer.id != i + 1){
                                 var remotePlayer = remotePlayerById(i + 1);
                                 var remotePlayerUpdateMsg = updateArr[remotePlayer.id - 1];

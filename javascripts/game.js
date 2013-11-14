@@ -20,6 +20,13 @@ var global = {
         flag: undefined,
         returnPoint: undefined
     },
+    time:{
+        serverTime : 0,
+        clientTime : 0,
+        timeOffSet : 100
+
+
+    },
    aliveBulletCount: 0
 };
 

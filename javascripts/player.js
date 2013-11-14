@@ -74,7 +74,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.updateCanShoot();
                 this.refillAmmo();
 
-                if (me.input.isKeyPressed('left') || me.sys.orientation < 90 ){
+                if (me.input.isKeyPressed('left') || me.sys.accel < 90 ){
                     //flip sprite on horizontal axis
                     this.flipX(true);
                     this.direction = "left";
