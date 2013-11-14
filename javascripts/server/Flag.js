@@ -43,6 +43,11 @@ function Flag()
         this.x = this.playerOwner.character.x;
         this.y = this.playerOwner.character.y;
     }
+    this.spawn = function(){
+        var randomSpawnPoint = randomSpawn();
+        this.x = randomSpawnPoint.x;
+        this.y = randomSpawnPoint.y;
+    }
 }
 
 global.Flag = Flag;

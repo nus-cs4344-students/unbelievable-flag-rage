@@ -24,7 +24,7 @@ function Character(xPos, yPos)
     this.y = yPos;
     this.vX = 0; // scaling factor is 10
     this.vY = 0; // scaling factor is 3
-    this.hitbox = new Hitbox(xPos,yPos);
+    this.hitbox = new Hitbox(xPos,yPos, 70, 95);
     this.health = 100;
     this.flag = null;
 
@@ -92,6 +92,12 @@ function Character(xPos, yPos)
             this.flag.ownerDie();
         }
         this.health = 100;
+        this.flag = null;
+    }
+    this.returnFlag = function(){
+        this.flag.ownerDie();
+        this.flag = null;
+
     }
 }
 global.Character = Character;

@@ -204,21 +204,23 @@ game.PlayerEntity = me.ObjectEntity.extend({
     checkCollision: function(){
         var res = me.game.collide(this);
         if (res){
-            switch (res.obj.type){
-                case me.game.COLLECTABLE_OBJECT: {
-//                    var isRemotePlayer = false;
-//                    if (global.state.remotePlayers.contains(id))
-//                        isRemotePlayer =true;
-                    this.sendToServer({
-                        type: "pickUpFlag",
-                        pid: this.pid,
-                        x: this.pos.x,
-                        y: this.pos.y
-                    });
-                    console.log("player " + this.id + "send pickUpFlag msg");
+            switch (res.obj.name){
+                //case me.game.COLLECTABLE_OBJECT: {
+                case "flag":{
+
+                    if (this.hasFlag == false){
+                        this.sendToServer({
+                            type: "pickUpFlag",
+                            pid: this.pid,
+                            x: this.pos.x,
+                            y: this.pos.y,
+                            timestamp: new Date().getTime()
+                        });
+                    }
+                    console.log("player.js checkCollision(): player " + this.id + " send pickUpFlag msg");
                     break;
                 }
-                case me.game.ENEMY_OBJECT: {
+                case "bullet":{
                     console.log("player detect got hit!");
                     this.health -= 20;
                     if (!this.flickering){
@@ -227,6 +229,16 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     //server updates need to be stored
                     //add checking with server updates for dead reckoning.
                     break;
+                }
+                // send position of returning flag for server to check
+                case "returnPoint":{
+                    console.log("player.js checkCollision(): player " + this.id + " returned flag!");
+                    this.sendToServer({
+                        type: "returnFlag",
+                        x: this.pos.x,
+                        y: this.pos.y,
+                        timestamp: new Date().getTime()
+                    })
                 }
             }
         }
