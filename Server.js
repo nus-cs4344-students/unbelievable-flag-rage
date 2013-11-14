@@ -59,13 +59,14 @@ function Server()
 
     }
     //broadcast with delay
-    var delayBroadcast = function (msg)
+    var delayBroadcast = function (msg,delay)
     {
         var id;
         for(id in sockets)
         {
-            setTimeout(unicast(sockets[id], msg),players[id].delay);
+            setTimeout(unicast, delay, sockets[id], msg);
         }
+        console.log(delay);
 
 
     }
@@ -311,10 +312,14 @@ function Server()
             */
         }
 
+        var errorpercentage = 0.2;
+        var from   = 3000 - errorpercentage* 3000;
+        var to = 3000 + errorpercentage*3000;
 
+        var changingdelay = Math.floor(Math.random()*(to - from + 1) + from);
         if (gameInterval !== undefined)
         {
-            broadcast ({
+            delayBroadcast ({
                 type: "update",
                 //player 1 state
                 p1: {
@@ -349,7 +354,7 @@ function Server()
                     vY:p4.character.getVY()
                 }
 
-            });
+            },changingdelay);
         }
 
     }
