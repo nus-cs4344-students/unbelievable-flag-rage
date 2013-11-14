@@ -28,6 +28,7 @@ function Server()
     var bullets;
     var flag;
     var returnPoint;
+    var lastStateUpdate = new Date().getTime();
     /*****************************   SENDING MESSAGE METHODS   *****************************/
     //private method: broadcast(msg)
     var broadcast = function (msg)
@@ -319,10 +320,12 @@ function Server()
         var changingdelay = Math.floor(Math.random()*(to - from + 1) + from);
         if (gameInterval !== undefined)
         {
+            var timeStamp = new Date().getTime();
             delayBroadcast ({
                 type: "update",
                 //player 1 state
                 p1: {
+                    time:timeStamp,
                     x:p1.character.getX(),
                     y:p1.character.getY(),
                     vX:p1.character.getVX(),
@@ -331,6 +334,7 @@ function Server()
 
                 //player 2 state
                 p2: {
+                    time:timeStamp,
                     x:p2.character.getX(),
                     y:p2.character.getY(),
                     vX:p2.character.getVX(),
@@ -340,6 +344,7 @@ function Server()
                 //player 3 state
 
                 p3: {
+                    time:timeStamp,
                     x:p3.character.getX(),
                     y:p3.character.getY(),
                     vX:p3.character.getVX(),
@@ -348,6 +353,7 @@ function Server()
 
                 //player 4 state
                 p4: {
+                    time:timeStamp,
                     x:p4.character.getX(),
                     y:p4.character.getY(),
                     vX:p4.character.getVX(),
@@ -359,6 +365,12 @@ function Server()
 
     }
     /*****************************   GAME STATE METHODS   *****************************/
+    function broadcastLoop(type,msg)
+    {
+
+
+    }
+
 
     function reset()
     {

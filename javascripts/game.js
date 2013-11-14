@@ -20,6 +20,15 @@ var global = {
         flag: undefined,
         returnPoint: undefined
     },
+    time:{
+        serverTime : 0,
+        clientTime : 0,
+        timeOffSet : 100
+    },
+    serverArray:{
+        serverUpdateArr :new Array(),// store server updates
+        bufferUpdateSize: 4 // size to store server update history
+    },
    aliveBulletCount: 0
 };
 

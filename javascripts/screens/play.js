@@ -12,8 +12,21 @@ game.PlayScreen = me.ScreenObject.extend({
     onResetEvent: function(){
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
+
     // add our HUD to the game world
        //me.game.add(new game.HUD.Container());
+
+
+
+
+        // register on the mousemove event using the viewport
+        me.input.registerPointerEvent("mousemove", me.game.viewport, function(event) {
+            // publish a "mousemove" message
+            me.event.publish("mousemove", [event]);
+            // don't propagate this event furthermore
+            return false;
+        });
+
     },
     onNewPlayer: function(data, isLocal) {
         var newPlayerName = "";
@@ -64,10 +77,20 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.S, "start");
         me.input.bindKey(me.input.KEY.Q, "shoot");
         me.input.bindKey(me.input.KEY.D, "drop");
+
         me.input.bindKey(me.input.KEY.Y, "delay");
+
+        me.input.bindMouse(me.input.mouse.LEFT, me.input.KEY.Q);
+        me.sys.watchAccelerometer();
+        //me.sys.watchDeviceOrientation();
+        //me.device.watchDeviceOrientation();
+       // me.device.watchAccelerometer();
+
 
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
+
+     ;
 
         /*
         // Create our player and set them to be the local player (so we know who "we" are)
@@ -90,6 +113,10 @@ game.PlayScreen = me.ScreenObject.extend({
 
                     case "update":
                         var updateArr = [];
+                        global.serverArray.serverUpdateArr = updateArr;
+                        if (global.serverArray.serverUpdateArr.length >= 60*global.serverArray.bufferUpdateSize){
+                            global.serverArray.serverUpdateArr.splice(0,1); //discard the oldest server update
+                        }
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
                         updateArr.push(message.p3); // i = 2
@@ -97,9 +124,12 @@ game.PlayScreen = me.ScreenObject.extend({
 
                         for (var i = 0; i < updateArr.length; i ++){
                             var updateMsg = updateArr[i];
-//                            if (global.state.localPlayer.id == (i + 1)  ){
-//                                setPlayerPos(global.state.localPlayer, updateMsg);
-//                            }
+                            if (global.state.localPlayer.id == (i + 1)  ){
+                                global.time.serverTime = updateArr[i].time;
+                                global.time.clientTime = global.time.serverTime - global.time.timeOffSet/1000;
+
+                                //setPlayerPos(global.state.localPlayer, updateMsg);
+                            }
                             if(global.state.localPlayer.id != i + 1){
                                 var remotePlayer = remotePlayerById(i + 1);
                                 var remotePlayerUpdateMsg = updateArr[remotePlayer.id - 1];

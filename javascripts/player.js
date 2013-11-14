@@ -28,7 +28,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         //this.autoSort = false;
 
         //set default horizontal & vertical speed (accel vector)
-        this.setVelocity(10,22);
+        this.setVelocity(3,22);
         this.vel.x = 0;
         this.vel.y = 0;
         this.jump = false;
@@ -76,7 +76,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.updateCanShoot();
                 this.refillAmmo();
 
-                if (me.input.isKeyPressed('left')){
+                if (me.input.isKeyPressed('left') || me.sys.accel < 90 ){
                     //flip sprite on horizontal axis
                     this.flipX(true);
                     this.direction = "left";
@@ -84,7 +84,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     this.vel.x -= this.accel.x *(me.timer.tick);
 
                 }
-                else if (me.input.isKeyPressed('right')){
+                else if (me.input.isKeyPressed('right') || me.sys.orientation >90 ){
                     //unflip sprite
                     this.flipX(false);
                     this.direction = "right";
