@@ -330,7 +330,7 @@ function Server()
                     y:p2.character.getY(),
                     vX:p2.character.getVX(),
                     vY:p2.character.getVY()
-                }/*,
+                },
 
                 //player 3 state
 
@@ -348,7 +348,7 @@ function Server()
                     vX:p4.character.getVX(),
                     vY:p4.character.getVY()
                 }
-                  */
+
             });
         }
 
