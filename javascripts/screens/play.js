@@ -104,6 +104,10 @@ game.PlayScreen = me.ScreenObject.extend({
 
                     case "update":
                         var updateArr = [];
+                        global.serverArray.serverUpdateArr = updateArr;
+                        if (global.serverArray.serverUpdateArr.length >= 60*global.serverArray.bufferUpdateSize){
+                            global.serverArray.serverUpdateArr.splice(0,1); //discard the oldest server update
+                        }
                         updateArr.push(message.p1); // i = 0 (remotePlayer.id = i + 1)
                         updateArr.push(message.p2); // i = 1
                         //updateArr.push(message.p3); // i = 2

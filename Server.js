@@ -365,6 +365,12 @@ function Server()
 
     }
     /*****************************   GAME STATE METHODS   *****************************/
+    function broadcastLoop(type,msg)
+    {
+
+
+    }
+
 
     function reset()
     {
