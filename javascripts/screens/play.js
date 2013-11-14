@@ -70,7 +70,7 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.S, "start");
         me.input.bindKey(me.input.KEY.Q, "shoot");
         me.input.bindKey(me.input.KEY.D, "drop");
-        me.input.bindMouse(me.input.mouse.LEFT, me.input.KEY.S);
+        me.input.bindMouse(me.input.mouse.LEFT, me.input.KEY.Q);
 
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
