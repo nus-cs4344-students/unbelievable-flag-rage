@@ -101,24 +101,24 @@ function Server()
             return 0; // game full
     }
 
-   function playerPosAssigning (PID)
-   {
-       // 1st player is always top left,
-       // 2nd player is always bottom left,
-       // 3rd player is always top right,
-       // 4th player is always bottom right
+    function playerPosAssigning (PID)
+    {
+        // 1st player is always top left,
+        // 2nd player is always bottom left,
+        // 3rd player is always top right,
+        // 4th player is always bottom right
 
-       if (PID == 1)
-           return "topLeft";
-       else if(PID == 2)
-           return "bottomLeft";
-       else if(PID == 3)
-           return "topRight";
-       else if(PID == 4)
-           return "bottomRight";
-       else
+        if (PID == 1)
+            return "topLeft";
+        else if(PID == 2)
+            return "bottomLeft";
+        else if(PID == 3)
+            return "topRight";
+        else if(PID == 4)
+            return "bottomRight";
+        else
             return "";
-   }
+    }
 
     function xStartPos (playerPos)
     {
@@ -162,7 +162,7 @@ function Server()
 
     }
 
-   	function newPlayer (conn)
+    function newPlayer (conn)
     {
         count++;
 
@@ -194,10 +194,10 @@ function Server()
             // Broadcast new player connected to other players
             selectiveBroadcast(PID,
                 {
-                type: "createRemotePlayer",
-                playerID: PID,
-                x: playerPosX,
-                y: playerPosY
+                    type: "createRemotePlayer",
+                    playerID: PID,
+                    x: playerPosX,
+                    y: playerPosY
                 }
             );
             // Tell new player about other existing players.
@@ -295,22 +295,22 @@ function Server()
                 }
             );
             /*
-            // Check player return flag
-            var flagReturned = returnPoint.checkGotReturn(flagOwner.character.x, flagOwner.character.y);
-            if (flagReturned){
-                flagOwner.character.returnFlag();
-                flag.spawn();
-                returnPoint.spawn();
-                broadcast({
-                    type:"spawnFlagAndReturn",
-                    flagX: flag.x,
-                    flagY: flag.y,
-                    rpX: returnPoint.x,
-                    rpY: returnPoint.y,
-                    pid: flagOwner.pid
-                });
-            }
-            */
+             // Check player return flag
+             var flagReturned = returnPoint.checkGotReturn(flagOwner.character.x, flagOwner.character.y);
+             if (flagReturned){
+             flagOwner.character.returnFlag();
+             flag.spawn();
+             returnPoint.spawn();
+             broadcast({
+             type:"spawnFlagAndReturn",
+             flagX: flag.x,
+             flagY: flag.y,
+             rpX: returnPoint.x,
+             rpY: returnPoint.y,
+             pid: flagOwner.pid
+             });
+             }
+             */
         }
 
 
@@ -385,11 +385,11 @@ function Server()
         //console.log("received update from player " + players[conn.id].pid);
         playerCharacter.updatePosition(message.x, message.y, message.vX, message.vY);
         /*
-        players[conn.id].character.setX(message.x);
-        players[conn.id].character.setY(message.y);
-        players[conn.id].character.setVX(message.vX);
-        players[conn.id].character.setVY(message.vY);
-        */
+         players[conn.id].character.setX(message.x);
+         players[conn.id].character.setY(message.y);
+         players[conn.id].character.setVX(message.vX);
+         players[conn.id].character.setVY(message.vY);
+         */
     }
 
     function playerShoot(conn,message)
@@ -436,29 +436,29 @@ function Server()
             }
         }
     }
-	
+
     function playing()
     {
-    	// There is already a timer running so the game has
+        // There is already a timer running so the game has
         // already started.
         console.log("Already playing!");
-    	
+
     }
-    
+
     function notEnoughPlayer()
     {
-    	// We need at least 2 players to play.
+        // We need at least 2 players to play.
         console.log("Not enough players!");
         broadcast({type:"message", content:"Not enough player"});
     }
-    
+
     function startGame()
     {
         // send flag spawn point to clients
         flag = new Flag();
         returnPoint = new ReturnPoint();
-    	// Everything is a OK
-    	broadcast({
+        // Everything is a OK
+        broadcast({
             type:"startGame",
             flagX: flag.x,
             flagY: flag.y,
@@ -472,19 +472,19 @@ function Server()
 
     function prepare()
     {
-        if (gameInterval !== undefined) 
+        if (gameInterval !== undefined)
         {
-        	playing();
+            playing();
         }
         /*
-        else if (Object.keys(players).length < 4)
-        {
-        	notEnoughPlayer();
-        }
+         else if (Object.keys(players).length < 4)
+         {
+         notEnoughPlayer();
+         }
          */
-        else 
+        else
         {
-        	startGame();
+            startGame();
         }
 
     }
@@ -502,14 +502,14 @@ function Server()
             // one of the player starts the game.
             case "start":
                 console.log("received start");
-            	prepare();
+                prepare();
                 break;
 
-           //update position
+            //update position
             case "update":
                 //console.log("server updating");
-            	update(conn,message);
-            	break;
+                update(conn,message);
+                break;
             case "playerShoot":
                 console.log("received playerShot" + players[conn.id].pid);
                 playerShoot(conn,message);
@@ -614,12 +614,12 @@ function Server()
 
     function startServerAndListenForConnection(express,http,sock)
     {
-       // Standard code to starts the server and listen for connection
+        // Standard code to starts the server and listen for connection
         var app = express();
         var httpServer = http.createServer(app);
         sock.installHandlers(httpServer, {prefix:'/game'});
         httpServer.listen(process.env.PORT||Game.PORT);
-        app.use(express.static(__dirname)); 
+        app.use(express.static(__dirname));
     }
 
 
@@ -650,11 +650,11 @@ function Server()
                 clientConnection (conn);
                 clientClosing (conn);
                 receivingDataFromClient (conn);
-                
+
             });// socket.on("connection"
 
-			
-			// Standard code to starts the server and listen for connection
+
+            // Standard code to starts the server and listen for connection
 
             startServerAndListenForConnection(express,http,sock);
         }

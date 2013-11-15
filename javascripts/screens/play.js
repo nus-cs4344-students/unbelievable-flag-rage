@@ -13,8 +13,8 @@ game.PlayScreen = me.ScreenObject.extend({
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
 
-    // add our HUD to the game world
-       //me.game.add(new game.HUD.Container());
+        // add our HUD to the game world
+        //me.game.add(new game.HUD.Container());
 
 
 
@@ -84,22 +84,22 @@ game.PlayScreen = me.ScreenObject.extend({
         //me.sys.watchAccelerometer();
         //me.sys.watchDeviceOrientation();
         //me.device.watchDeviceOrientation();
-       // me.device.watchAccelerometer();
+        // me.device.watchAccelerometer();
 
 
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
 
-     ;
+        ;
 
         /*
-        // Create our player and set them to be the local player (so we know who "we" are)
-        global.state.localPlayer = new game.PlayerEntity(70, 910, {
-            spritewidth: 70,
-            spriteheight: 95,
-            name: "player"
-        });
-        */
+         // Create our player and set them to be the local player (so we know who "we" are)
+         global.state.localPlayer = new game.PlayerEntity(70, 910, {
+         spritewidth: 70,
+         spriteheight: 95,
+         name: "player"
+         });
+         */
         this.gameStart = true;
 
         // Start Connection to server
@@ -109,7 +109,7 @@ game.PlayScreen = me.ScreenObject.extend({
                 var message = JSON.parse(e.data);
                 switch (message.type) {
                     case "message":
-                    break;
+                        break;
 
                     case "update":
                         var updateArr = [];
@@ -139,7 +139,7 @@ game.PlayScreen = me.ScreenObject.extend({
                                 setPlayerPos(remotePlayer, remotePlayerUpdateMsg);
                             }
                         }
-                    break;
+                        break;
 
                     //get local player ID - 1,2,3,4 from server after connecting
                     case "myID":
@@ -147,7 +147,7 @@ game.PlayScreen = me.ScreenObject.extend({
                         global.state.localPlayer.id = message.playerID;
                         global.state.playername = message.playerID;
                         global.state.localPlayer.name =  message.playerID;
-                    break;
+                        break;
 
                     case "createLocalPlayer":
                         if (global.state.localPlayer == undefined){
@@ -155,7 +155,7 @@ game.PlayScreen = me.ScreenObject.extend({
                             game.playScreen.onNewPlayer(message, isLocal);
                             console.log("Create local player: " + message.playerID);
                         }
-                    break;
+                        break;
 
                     case "createRemotePlayer":
                         var remotePlayerID = message.playerID;
@@ -164,7 +164,7 @@ game.PlayScreen = me.ScreenObject.extend({
                             game.playScreen.onNewPlayer(message, isLocal);
                             console.log("Create remote player: " + remotePlayerID);
                         }
-                    break;
+                        break;
 
                     case "playerShoot":
                         console.log("received playerShoot");
@@ -178,7 +178,7 @@ game.PlayScreen = me.ScreenObject.extend({
                         me.game.add(opponentBullet, 2);
                         me.game.sort();
 
-                    break;
+                        break;
 
                     case "gotHit":
                         if (global.state.localPlayer.id == message.pid){
@@ -194,7 +194,7 @@ game.PlayScreen = me.ScreenObject.extend({
                                 console.log("server: " + opponentHit.id + "got hit. health: " + newHealth);
                             }
                         }
-                    break;
+                        break;
 
                     case "spawnFlagAndReturn":
                         console.log("Client Returned Flag!");
@@ -217,7 +217,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
                         global.state.returnPoint.pos.x = message.rpX;
                         global.state.returnPoint.pos.Y = message.rpY;
-                    break;
+                        break;
 
                     case "playerPickUpFlag":
                         console.log("server: playerPickUpFlag : " + message.pid);
@@ -247,7 +247,7 @@ game.PlayScreen = me.ScreenObject.extend({
                         me.game.sort();
                         me.game.add(returnPoint, 2);
                         me.game.sort();
-                    break;
+                        break;
 
                     case "playerDied":
                         console.log("server: playerDied " + message.pid);
@@ -272,7 +272,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
                         }
                         console.log("server: playerDied flag.collidable = " + global.state.flag.collidable);
-                    break;
+                        break;
 
                     case "respawnPlayer":
                         console.log("server: respawnPlayer " + message.pid);
@@ -298,18 +298,18 @@ game.PlayScreen = me.ScreenObject.extend({
                             if (respawningPlayer.visible == false)
                                 respawningPlayer.visible = true;
                         }
-                    break;
+                        break;
 
                     case "updateFlagPos" :
                         //console.log("server: updateFlagPos " + message.x + ", " + message.y);
                         global.state.flag.pos.x = message.x;
                         global.state.flag.pos.y = message.y;
-                    break;
+                        break;
                 }
             }
         } catch (e){
             console.log("Failed to connect to " + "http://" + global.network.host + ":" + global.network.port);
-            }
+        }
     },
 
     // For error debugging

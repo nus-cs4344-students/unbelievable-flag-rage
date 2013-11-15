@@ -29,7 +29,7 @@ var global = {
         serverUpdateArr :new Array(),// store server updates
         bufferUpdateSize: 4 // size to store server update history
     },
-   aliveBulletCount: 0
+    aliveBulletCount: 0
 };
 
 /* game namespace */
