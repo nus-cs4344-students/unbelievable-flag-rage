@@ -38,6 +38,7 @@ game.FlagEntity = me.ObjectEntity.extend({
         return {x: randomX, y :randomY};
     },
     getPickUp: function(player){
+        me.audio.play("cling");
             this.playerOwner = player;
             this.lastOwner = player;
             this.collidable = false;
@@ -45,6 +46,7 @@ game.FlagEntity = me.ObjectEntity.extend({
             this.alwaysUpdate = true;
     },
     getReturned: function(){
+       // me.audio.play("cling");
 
     },
     ownerDie: function(){
