@@ -77,6 +77,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 this.refillAmmo();
 
                 if (me.input.isKeyPressed('left') || me.sys.accel < 90 ){
+                   // me.audio.play("walk");
                     //flip sprite on horizontal axis
                     this.flipX(true);
                     this.direction = "left";
@@ -86,6 +87,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
 
                 }
                 else if (me.input.isKeyPressed('right') || me.sys.orientation >90 ){
+                   // me.audio.play("walk");
                     //unflip sprite
                     this.flipX(false);
                     this.direction = "right";
@@ -97,9 +99,11 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     this.vel.x = 0;
                 }
                 if (me.input.isKeyPressed('jump')){
+
                     this.jump = true;
                     //make sure we are not already jumping/falling
                     if (!this.jumping && !this.falling){
+                        me.audio.play("jump");
                         // set current vel to the maximum defined value
                         // gravity will then do the rest
                         this.vel.y = -this.maxVel.y * me.timer.tick;
@@ -117,6 +121,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 }
 
                 if (me.input.isKeyPressed('shoot')){
+
                     if (this.canShoot){
                         console.log("+++++++++++ player shot " + this.direction);
                         this.renderable.setCurrentAnimation("shoot");

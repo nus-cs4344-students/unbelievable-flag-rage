@@ -366,7 +366,7 @@ function Server()
                     vY:p4.character.getVY()
                 }
 
-            },changingdelay);
+            },0);
         }
 
     }

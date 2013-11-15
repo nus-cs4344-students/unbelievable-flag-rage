@@ -5,6 +5,7 @@ var global = {
     DEBUG: true,
     network: {
         //host: "unbelievable-flag-rage.herokuapp.com",
+
 //        host: "localhost",
         host: "172.28.178.151",
         port: "4344",
@@ -59,6 +60,9 @@ var game =
 
         //
         //me.sys.stopOnBlur = false;
+        // Initialize the audio.
+        me.audio.init("mp3,ogg");
+
         // Set a callback to run when loading is complete.
         me.loader.onload = this.loaded.bind(this);
         // Load Resources

@@ -10,6 +10,7 @@
 //Loads simpleMap whenever entering state of being on this screen
 game.PlayScreen = me.ScreenObject.extend({
     onResetEvent: function(){
+        me.audio.playTrack("bluerain");
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
         me.levelDirector.loadLevel("simpleMap");
 
@@ -168,6 +169,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
                     case "playerShoot":
                         console.log("received playerShoot");
+                        me.audio.play("stomp");
                         var direction = "";
                         if (message.bulletVX < 0){
                             direction = "left";
@@ -202,6 +204,7 @@ game.PlayScreen = me.ScreenObject.extend({
                     case "spawnFlagAndReturn":
 
                         console.log("Client Returned Flag!");
+                        me.audio.play("score");
                         console.log("New ReturnPoint: " + message.rpX + "," + message.rpY);
 
                         if (global.state.localPlayer.id == message.pid){
