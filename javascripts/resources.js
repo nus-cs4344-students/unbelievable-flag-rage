@@ -46,4 +46,5 @@ game.resources = [
         src: "data/player/32x32_font.png"
     }
 
+
 ];

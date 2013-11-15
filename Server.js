@@ -318,7 +318,7 @@ function Server()
     /*****************************   GAME STATE METHODS   *****************************/
     function broadcastLoop()
     {
-        var artificialDelay = 500;
+        var artificialDelay = 800;
         var errorpercentage = 0.2;
         var from   = artificialDelay - errorpercentage* artificialDelay;
         var to = artificialDelay + errorpercentage*artificialDelay;
@@ -467,7 +467,7 @@ function Server()
         });
         // TODO: might need separate gameState and sendUpdate loops
         gameInterval = setInterval(function() {gameLoop();}, 1000/Game.FRAME_RATE);
-        setInterval(function() {broadcastLoop();}, 1000/45);
+        setInterval(function() {broadcastLoop();}, 1000/15);
     }
 
     function prepare()

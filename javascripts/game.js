@@ -5,7 +5,8 @@ var global = {
     DEBUG: true,
     network: {
         //host: "unbelievable-flag-rage.herokuapp.com",
-        host: "localhost",
+//        host: "localhost",
+        host: "172.28.178.151",
         port: "4344",
         //port: 80,
         totlatency: 0,
@@ -65,6 +66,8 @@ var game =
 
         //Initialize melonJS and display a loading screen.
         me.state.change(me.state.LOADING);
+
+
     },
     loaded: function() {
         // set the Play/Ingame Screen Object

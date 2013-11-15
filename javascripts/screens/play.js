@@ -178,12 +178,15 @@ game.PlayScreen = me.ScreenObject.extend({
                         me.game.add(opponentBullet, 2);
                         me.game.sort();
 
+
                         break;
 
                     case "gotHit":
                         if (global.state.localPlayer.id == message.pid){
+
                             if (global.state.localPlayer.health > 0){
                                 var newHealth = message.health;
+
                                 console.log("server: " + global.state.localPlayer.id + "got hit. health: " + newHealth);
                             }
                         }
@@ -197,6 +200,7 @@ game.PlayScreen = me.ScreenObject.extend({
                         break;
 
                     case "spawnFlagAndReturn":
+
                         console.log("Client Returned Flag!");
                         console.log("New ReturnPoint: " + message.rpX + "," + message.rpY);
 

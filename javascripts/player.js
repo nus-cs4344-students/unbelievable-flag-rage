@@ -83,6 +83,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     //update entity velocity
                     this.vel.x -= this.accel.x *(me.timer.tick);
 
+
                 }
                 else if (me.input.isKeyPressed('right') || me.sys.orientation >90 ){
                     //unflip sprite
@@ -90,6 +91,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     this.direction = "right";
                     //update entity velocity
                     this.vel.x += this.accel.x *(me.timer.tick);
+
                 }
                 else {
                     this.vel.x = 0;
@@ -103,6 +105,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                         this.vel.y = -this.maxVel.y * me.timer.tick;
                         // set the jumping flag
                         this.jumping = true;
+
                     }
                 }//if (me.input.isKeyPressed('jump'))
 
@@ -110,6 +113,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     sendToServer({type: "start"});
                     //game.playScreen.gameStart = true;
                     console.log("send server START");
+
                 }
 
                 if (me.input.isKeyPressed('shoot')){
@@ -125,6 +129,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                         me.game.sort();
                         global.aliveBulletCount++;
 
+
                         this.sendToServer({
                             type: "playerShoot",
                             bulletX: bullet.pos.x,
@@ -133,7 +138,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                         });
                         console.log("local player bullet: " + bullet.pos.x + bullet.pos.y) ;
                         console.log("    player location: " + this.pos.x + this.pos.y);
-                        //me.audio.play("shoot");
+
                     }
                 } // if (keyPressed('shoot'))
 
