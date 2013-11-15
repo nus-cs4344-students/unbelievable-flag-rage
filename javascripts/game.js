@@ -81,6 +81,9 @@ var game =
 
         //load texture for player
         game.player1Texture = new me.TextureAtlas(me.loader.getJSON("p1_walk"), me.loader.getImage("p1_walk"));
+        game.player2Texture = new me.TextureAtlas(me.loader.getJSON("p2_walk"), me.loader.getImage("p2_walk"));
+        game.player3Texture = new me.TextureAtlas(me.loader.getJSON("p3_walk"), me.loader.getImage("p3_walk"));
+        game.player4Texture = new me.TextureAtlas(me.loader.getJSON("p4_walk"), me.loader.getImage("p4_walk"));
         me.debug.renderHitBox = false;
         // start the game
         me.state.change(me.state.PLAY);

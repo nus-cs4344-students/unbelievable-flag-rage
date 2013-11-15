@@ -43,8 +43,11 @@ game.PlayScreen = me.ScreenObject.extend({
             spritewidth: 70,
             spriteheight: 95,
             name: newPlayerName,
-            isLocal: isLocal
+            isLocal: isLocal,
+            playerID:data.playerID
         });
+
+
         newPlayer.id = data.playerID;
         newPlayer.name = data.playerID;
         //autoSort = false;

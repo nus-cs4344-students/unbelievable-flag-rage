@@ -47,15 +47,49 @@ game.PlayerEntity = me.ObjectEntity.extend({
         //this.renderable.updateWhenPause = true;
 
         // set a renderable
-        this.renderable = game.player1Texture.createAnimationFromName([
-            "p1_walk01.png", "p1_walk02.png", "p1_walk03.png",
-            "p1_walk04.png", "p1_walk05.png", "p1_walk06.png",
-            "p1_walk07.png", "p1_walk08.png", "p1_walk09.png",
-            "p1_walk10.png", "p1_walk11.png"
-        ]);
+
+        if(settings.playerID == 1)
+        {
+            this.renderable = game.player1Texture.createAnimationFromName([
+                "p1_walk01.png", "p1_walk02.png", "p1_walk03.png",
+                "p1_walk04.png", "p1_walk05.png", "p1_walk06.png",
+                "p1_walk07.png", "p1_walk08.png", "p1_walk09.png",
+                "p1_walk10.png", "p1_walk11.png"
+            ]);
+
+        }
+        else if ( settings.playerID == 2)
+        {
+            this.renderable = game.player2Texture.createAnimationFromName([
+                "p2_walk01.png", "p2_walk02.png", "p2_walk03.png",
+                "p2_walk04.png", "p2_walk05.png", "p2_walk06.png",
+                "p2_walk07.png", "p2_walk08.png", "p2_walk09.png",
+                "p2_walk10.png", "p2_walk11.png"
+            ]);
+        }
+        else if( settings.playerID == 3)
+        {
+            this.renderable = game.player3Texture.createAnimationFromName([
+                "p3_walk01.png", "p3_walk02.png", "p3_walk03.png",
+                "p3_walk04.png", "p3_walk05.png", "p3_walk06.png",
+                "p3_walk07.png", "p3_walk08.png", "p3_walk09.png",
+                "p3_walk10.png", "p3_walk11.png"
+            ]);
+
+        }
+        else if( settings.playerID == 4)
+        {
+            this.renderable = game.player4Texture.createAnimationFromName([
+                "p4_walk01.png", "p4_walk02.png", "p4_walk03.png",
+                "p4_walk04.png"
+            ]);
+
+        }
+
+
 
         // define a basic walking animatin
-        this.renderable.addAnimation ("walk",  [0, 1, 2, 3,4,5,6,7,8,9,10],3);
+        this.renderable.addAnimation ("walk",  [0, 1, 2, 3],3);
         //" p1_walk04.png"]);/*, "p1_walk05.png", "p1_walk06.png",
         //"p1_walk07.png", "p1_walk08.png", "p1_walk09.png"]);
         //"p1_walk10.png", "p1_walk11.png"]);*/
