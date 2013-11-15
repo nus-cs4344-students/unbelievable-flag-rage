@@ -81,7 +81,7 @@ game.PlayScreen = me.ScreenObject.extend({
         me.input.bindKey(me.input.KEY.Y, "delay");
 
         me.input.bindMouse(me.input.mouse.LEFT, me.input.KEY.Q);
-        me.sys.watchAccelerometer();
+        //me.sys.watchAccelerometer();
         //me.sys.watchDeviceOrientation();
         //me.device.watchDeviceOrientation();
        // me.device.watchAccelerometer();
