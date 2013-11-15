@@ -16,7 +16,8 @@ var Game = {
     PLAYER_TOP_START_POS_Y: 140,     // player top y-coord
     PLAYER_BOTTOM_START_POS_Y: 910, // player bottom y-coord
     FRAME_RATE : 60,			    // frame rate of game
-    SERVER_NAME : "localhost"	    // server name of game
+    //SERVER_NAME : "localhost"	    // server name of game
+    SERVER_NAME : "172.28.179.87"
     //SERVER_NAME : "unbelievable-flag-rage.herokuapp.com"	// server name of game
 }
 

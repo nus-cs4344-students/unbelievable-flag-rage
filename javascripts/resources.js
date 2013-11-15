@@ -47,7 +47,10 @@ game.resources = [
     },
     {name: "cling", type: "audio", src: "data/sfx/", channel : 2},
     {name: "stomp", type: "audio", src: "data/sfx/", channel : 1},
-    {name: "jump",  type: "audio", src: "data/sfx/", channel : 1}
+    {name: "jump",  type: "audio", src: "data/sfx/", channel : 1},
+    {name: "score", type: "audio", src: "data/sfx/", channel : 1},
+    {name: "walk", type: "audio", src: "data/sfx/", channel : 1},
+    {name: "bluerain", type: "audio", src: "data/sfx/", channel : 1}
 
 
 ];

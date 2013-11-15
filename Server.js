@@ -318,7 +318,7 @@ function Server()
     /*****************************   GAME STATE METHODS   *****************************/
     function broadcastLoop()
     {
-        var artificialDelay = 500;
+        var artificialDelay = 800;
         var errorpercentage = 0.2;
         var from   = artificialDelay - errorpercentage* artificialDelay;
         var to = artificialDelay + errorpercentage*artificialDelay;
@@ -366,7 +366,7 @@ function Server()
                     vY:p4.character.getVY()
                 }
 
-            },changingdelay);
+            },0);
         }
 
     }
