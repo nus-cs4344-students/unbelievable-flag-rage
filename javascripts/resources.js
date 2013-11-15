@@ -44,6 +44,9 @@ game.resources = [
         name: "32x32_font",
         type:"image",
         src: "data/player/32x32_font.png"
-    }
+    },
+    {name: "cling", type: "audio", src: "data/sfx/", channel : 2},
+    {name: "stomp", type: "audio", src: "data/sfx/", channel : 1},
+    {name: "jump",  type: "audio", src: "data/sfx/", channel : 1}
 
 ];

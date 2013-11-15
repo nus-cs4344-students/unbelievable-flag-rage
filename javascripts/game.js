@@ -58,6 +58,9 @@ var game =
 
         //
         //me.sys.stopOnBlur = false;
+        // Initialize the audio.
+        me.audio.init("mp3,ogg");
+
         // Set a callback to run when loading is complete.
         me.loader.onload = this.loaded.bind(this);
         // Load Resources

@@ -95,6 +95,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                     this.vel.x = 0;
                 }
                 if (me.input.isKeyPressed('jump')){
+                    me.audio.play("jump");
                     this.jump = true;
                     //make sure we are not already jumping/falling
                     if (!this.jumping && !this.falling){
@@ -113,6 +114,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
                 }
 
                 if (me.input.isKeyPressed('shoot')){
+                    me.audio.play("stomp");
                     if (this.canShoot){
                         console.log("+++++++++++ player shot " + this.direction);
                         this.renderable.setCurrentAnimation("shoot");
